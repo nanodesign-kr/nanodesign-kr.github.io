@@ -202,7 +202,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.05-6";
+const APP_VER="2026.11.05-7";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -354,6 +354,7 @@ function vHome(){
     <button class="btn soft big" onclick="location.hash='#seats'">🪑 자리 정하기</button>
     <button class="btn soft big" onclick="location.hash='#people'">👤 사람 추가하기</button>
   </div>`;
+  o+=`<p class="muted" style="text-align:center;font-size:12px;margin:22px 0 0">앱 버전 ${APP_VER}</p>`;
   return o;
 }
 
