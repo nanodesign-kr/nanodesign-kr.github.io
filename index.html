@@ -47,6 +47,8 @@ header.top .in{max-width:860px;margin:0 auto;padding:12px 16px;display:flex;alig
 .grp-h b{flex:1;font-size:15px}
 .grp .item{border:0;border-radius:0;border-bottom:1px solid var(--line)}
 .grp .item:last-child{border-bottom:0}
+[data-lp]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+[data-lp].pressing{background:var(--pri-soft)}
 @media(max-width:480px){.ttl small{display:none}}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
 nav.tabs .in{max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
@@ -202,7 +204,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.05-7";
+const APP_VER="2026.11.08-1";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -345,8 +347,8 @@ function vHome(){
   </div>`;
   o+=`<h2 class="sec">🔔 확인이 필요해요</h2>`;
   const al=[];
-  ending.forEach(p=>{ const n=dday(p.contractEnd); al.push(`<button class="item" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">⏰</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${n<0?"b-red":"b-orange"}">${ddayText(n)}</span></div><div class="meta">계약 종료 ${fmtDate(p.contractEnd)} · PC·좌석 인계를 준비해 주세요</div></div><span class="arrow">›</span></button>`); });
-  leftover.forEach(p=>{ al.push(`<button class="item" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">🧹</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${P_ST[p.status]?P_ST[p.status].c:"b-gray"}">${h(p.status||"-")}</span></div><div class="meta">테라타워에 없는데 PC나 좌석이 아직 이 사람으로 되어 있어요</div></div><span class="arrow">›</span></button>`); });
+  ending.forEach(p=>{ const n=dday(p.contractEnd); al.push(`<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">⏰</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${n<0?"b-red":"b-orange"}">${ddayText(n)}</span></div><div class="meta">계약 종료 ${fmtDate(p.contractEnd)} · PC·좌석 인계를 준비해 주세요</div></div><span class="arrow">›</span></button>`); });
+  leftover.forEach(p=>{ al.push(`<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">🧹</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${P_ST[p.status]?P_ST[p.status].c:"b-gray"}">${h(p.status||"-")}</span></div><div class="meta">테라타워에 없는데 PC나 좌석이 아직 이 사람으로 되어 있어요</div></div><span class="arrow">›</span></button>`); });
   o+=al.length?`<div class="list">${al.join("")}</div>`:`<div class="alert ok"><span class="ic">✅</span><div><b>지금은 확인할 일이 없어요.</b>계약 종료 30일 전부터 여기에 알려 드려요.</div></div>`;
   o+=`<h2 class="sec">⚡ 자주 하는 일</h2><div class="grid g2">
     <button class="btn soft big" onclick="location.hash='#guide'">📋 처음 왔어요</button>
@@ -403,7 +405,7 @@ function vPcs(bodyOnly){
 }
 function pcItem(p){
   const st=PC_ST[p.status]||{c:"b-gray"}, u=pname(p.personId);
-  return `<button class="item" onclick="App.pcDetail('${h(p.id)}')"><span style="font-size:24px">💻</span><div class="main"><div class="nm">${h(p.name||"(이름 없음)")} <span class="badge ${st.c}">${h(p.status||"-")}</span></div><div class="meta">👤 ${u?h(u):'<span class="muted">사용자 없음</span>'}${p.project?" · 📁 "+h(p.project):""}${p.place?" · 📍 "+h(p.place):""}</div></div><span class="arrow">›</span></button>`;
+  return `<button class="item" data-lp="pc:${h(p.id)}" onclick="App.pcDetail('${h(p.id)}')"><span style="font-size:24px">💻</span><div class="main"><div class="nm">${h(p.name||"(이름 없음)")} <span class="badge ${st.c}">${h(p.status||"-")}</span></div><div class="meta">👤 ${u?h(u):'<span class="muted">사용자 없음</span>'}${p.project?" · 📁 "+h(p.project):""}${p.place?" · 📍 "+h(p.place):""}</div></div><span class="arrow">›</span></button>`;
 }
 
 /* ---------- 좌석 ---------- */
@@ -427,7 +429,7 @@ function personRow(p,withProject){
   const pcs=S.pcs.filter(x=>x.personId===p.id).map(x=>x.name), seat=S.seats.find(s=>s.personId===p.id);
   const period=(p.contractStart||p.contractEnd)?`📅 ${fmtDate(p.contractStart)} ~ ${fmtDate(p.contractEnd)}`:"";
   const meta=[withProject&&p.project?"📁 "+h(p.project):"",period,"💻 "+(pcs.length?h(pcs.join(", ")):"-"),"🪑 "+(seat?h((seat.zone||"")+" "+seat.num+"번"):"-")].filter(Boolean).join(" · ");
-  return `<button class="item" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">👤</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${st.c}">${h(p.status||"-")}</span>${p.contractEnd&&n!=null&&n<=30?` <span class="badge ${n<0?"b-red":"b-orange"}">${ddayText(n)}</span>`:""}</div><div class="meta">${meta}</div></div><span class="arrow">›</span></button>`;
+  return `<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">👤</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${st.c}">${h(p.status||"-")}</span>${p.contractEnd&&n!=null&&n<=30?` <span class="badge ${n<0?"b-red":"b-orange"}">${ddayText(n)}</span>`:""}</div><div class="meta">${meta}</div></div><span class="arrow">›</span></button>`;
 }
 function vProjects(){
   let o=`<h1 class="page">📁 과제 현황</h1><p class="lead">과제별로 누가 참여하고 있는지, 계약이 언제 끝나는지 볼 수 있어요.</p>`;
@@ -451,8 +453,8 @@ function vPeople(bodyOnly){
   let list=S.people.slice().sort(byName);
   const counts={전체:list.length}; Object.keys(P_ST).forEach(k=>counts[k]=list.filter(p=>p.status===k).length);
   if(S.pFilter!=="전체") list=list.filter(p=>p.status===S.pFilter);
-  const q=S.pQ.trim().toLowerCase(); if(q) list=list.filter(p=>[p.name,p.nameEn,p.rank,p.project,p.contact,p.email,p.note].join(" ").toLowerCase().includes(q));
-  let o=`<h1 class="page">👥 나노디자인 전체 인원</h1><p class="lead">회사 인원 모두의 연락처, 과제, 근무 위치를 볼 수 있어요. 이름을 누르면 자세히 보여요.</p>`;
+  const q=S.pQ.trim().toLowerCase(); if(q) list=list.filter(p=>[p.name,p.nameEn,p.rank,p.project,p.contact,p.email,p.knox,p.ssoId,p.vwpId,p.note].join(" ").toLowerCase().includes(q));
+  let o=`<h1 class="page">👥 나노디자인 전체 인원</h1><p class="lead">회사 인원 모두의 연락처, 과제, 근무 위치, 계정 정보를 볼 수 있어요. 이름을 누르면 자세히 보이고, <b>길게 누르면 고치기·삭제</b>를 할 수 있어요.</p>`;
   o+=`<div class="row" style="margin-bottom:12px"><input class="search" style="flex:1;min-width:160px" placeholder="🔍 이름·과제·연락처" value="${h(S.pQ)}" oninput="App.pSearch(this.value)"><button class="btn" onclick="App.editPerson()">＋ 사람 추가</button></div>`;
   const head=o; o="";
   o+=`<div class="chips">${["전체",...Object.keys(P_ST)].map(k=>`<button class="chip ${S.pFilter===k?"on":""}" onclick="App.pFilter('${k}')">${k} ${counts[k]}</button>`).join("")}</div>`;
@@ -462,7 +464,7 @@ function vPeople(bodyOnly){
     const st=P_ST[p.status]||{c:"b-gray"};
     const line1=[p.rank?h(p.rank):"",p.nameEn?h(p.nameEn):""].filter(Boolean).join(" · ");
     const line2=[p.contact?"📞 "+h(p.contact):"",p.email?"✉️ "+h(p.email):""].filter(Boolean).join(" · ");
-    return `<button class="item" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">👤</span><div class="main"><div class="nm">${h(p.name)}${line1?` <span class="muted" style="font-weight:500;font-size:13px">${line1}</span>`:""} <span class="badge ${st.c}">${h(p.status||"-")}</span></div><div class="meta">📁 ${h(p.project||"배정 안 됨")}</div>${line2?`<div class="meta">${line2}</div>`:""}</div><span class="arrow">›</span></button>`;
+    return `<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">👤</span><div class="main"><div class="nm">${h(p.name)}${line1?` <span class="muted" style="font-weight:500;font-size:13px">${line1}</span>`:""} <span class="badge ${st.c}">${h(p.status||"-")}</span></div><div class="meta">📁 ${h(p.project||"배정 안 됨")}</div>${line2?`<div class="meta">${line2}</div>`:""}</div><span class="arrow">›</span></button>`;
   }).join("")+`</div>`;
   return bodyOnly?o:head+`<div id="sbody">${o}</div>`;
 }
@@ -518,6 +520,13 @@ const val=id=>{const e=$(id);return e?e.value.trim():"";};
 
 const App={
   close:closeModal,
+  lpMenu(kind,id){
+    const nm=kind==="pc"?((S.pcs.find(x=>x.id===id)||{}).name||""):pname(id);
+    openModal(`<h3>${kind==="pc"?"💻":"👤"} ${h(nm)}</h3><p class="hint">무엇을 할까요?</p>
+      <div class="list"><button class="btn soft big" onclick="App.${kind==="pc"?"editPc":"editPerson"}('${h(id)}')">✏️ 정보 고치기</button>
+      <button class="btn danger big" onclick="App.${kind==="pc"?"delPc":"delPerson"}('${h(id)}')">🗑️ 삭제하기</button></div>
+      <div class="actions"><button class="btn ghost" onclick="App.close()">닫기</button></div>`);
+  },
   go:goTo,
   opt(btn){ const g=btn.parentElement; g.querySelectorAll(".opt").forEach(b=>b.classList.remove("on")); btn.classList.add("on"); $(g.dataset.opt).value=btn.dataset.v; },
   pcFilter(k){ S.pcFilter=k; if(S.view==="pcs") render(); },
@@ -703,7 +712,10 @@ const App={
         <dt>영문 이름</dt><dd>${h(p.nameEn||"-")}</dd>
         <dt>직급</dt><dd>${h(p.rank||"-")}</dd>
         <dt>연락처</dt><dd>${p.contact?`<a href="tel:${h(p.contact)}" style="color:var(--pri)">${h(p.contact)}</a>`:"-"}</dd>
-        <dt>이메일</dt><dd>${p.email?`<a href="mailto:${h(p.email)}" style="color:var(--pri)">${h(p.email)}</a>`:"-"}</dd>
+        <dt>개인 이메일</dt><dd>${p.email?`<a href="mailto:${h(p.email)}" style="color:var(--pri)">${h(p.email)}</a>`:"-"}</dd>
+        <dt>Knox 메일</dt><dd>${p.knox?`<a href="mailto:${h(p.knox)}" style="color:var(--pri)">${h(p.knox)}</a>`:"-"}</dd>
+        <dt>RBS/SSO ID</dt><dd>${h(p.ssoId||"-")}</dd>
+        <dt>VWP/TOSS ID</dt><dd>${h(p.vwpId||"-")}</dd>
         <dt>메모</dt><dd style="white-space:pre-wrap">${h(p.note||"-")}</dd>
       </dl>
       <div class="actions"><button class="btn" onclick="App.editPerson('${h(id)}')">✏️ 정보 고치기</button><button class="btn danger" onclick="App.delPerson('${h(id)}')">삭제</button></div>
@@ -718,14 +730,16 @@ const App={
       <div class="f"><label>과제 <em>(선택)</em></label><input id="ppProj" value="${h(p.project||"")}" placeholder="예) A사 PLL 과제"></div>
       <div class="row"><div class="f" style="flex:1;min-width:140px"><label>계약 시작</label><input type="date" id="ppS" value="${h(p.contractStart||"")}"></div><div class="f" style="flex:1;min-width:140px"><label>계약 종료</label><input type="date" id="ppE" value="${h(p.contractEnd||"")}"></div></div>
       <div class="f"><label>연락처 <em>(선택)</em></label><input id="ppC" value="${h(p.contact||"")}" placeholder="예) 010-0000-0000" inputmode="tel"></div>
-      <div class="f"><label>이메일 <em>(선택)</em></label><input id="ppMail" value="${h(p.email||"")}" placeholder="예) name@nanodesign.co.kr" inputmode="email"></div>
+      <div class="f"><label>개인 이메일 <em>(선택)</em></label><input id="ppMail" value="${h(p.email||"")}" placeholder="예) name@nanodesign.co.kr" inputmode="email"></div>
+      <div class="f"><label>협력사 Knox 메일 <em>(선택)</em></label><input id="ppKnox" value="${h(p.knox||"")}" placeholder="예) name@partner.sec.co.kr" inputmode="email"></div>
+      <div class="row"><div class="f" style="flex:1;min-width:140px"><label>RBS/SSO ID <em>(선택)</em></label><input id="ppSso" value="${h(p.ssoId||"")}"></div><div class="f" style="flex:1;min-width:140px"><label>VWP/TOSS ID <em>(선택)</em></label><input id="ppVwp" value="${h(p.vwpId||"")}"></div></div>
       <div class="f"><label>메모 <em>(선택)</em></label><textarea id="ppNote">${h(p.note||"")}</textarea></div>
       <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._savePerson('${id?h(id):""}')">저장</button></div>`);
   },
   async _savePerson(id){
     const name=val("ppName"); if(!name){ toast("이름을 써 주세요"); return; }
     const old=id?person(id):null, st=val("ppSt")||"테라타워 근무";
-    const body=Object.assign({},old?stripId(old):{},{name,status:st,project:val("ppProj"),contractStart:val("ppS"),contractEnd:val("ppE"),contact:val("ppC"),nameEn:val("ppEn"),rank:val("ppRank"),email:val("ppMail"),note:val("ppNote"),updated:today()});
+    const body=Object.assign({},old?stripId(old):{},{name,status:st,project:val("ppProj"),contractStart:val("ppS"),contractEnd:val("ppE"),contact:val("ppC"),nameEn:val("ppEn"),rank:val("ppRank"),email:val("ppMail"),knox:val("ppKnox"),ssoId:val("ppSso"),vwpId:val("ppVwp"),note:val("ppNote"),updated:today()});
     const nid=id||uidGen();
     if(await write(db=>db.doc("people/"+nid).set(body),id?"고쳤어요":"추가했어요")){
       closeModal();
@@ -778,7 +792,7 @@ const App={
     if(!window.XLSX){ toast("엑셀 도구를 불러오는 중이에요. 잠시 후 다시 눌러 주세요."); return; }
     const X=window.XLSX, wb=X.utils.book_new();
     const add=(name,rows)=>{ const ws=X.utils.json_to_sheet(rows.length?rows:[{"(비어 있음)":""}]); X.utils.book_append_sheet(wb,ws,name); };
-    add("사람",S.people.slice().sort(byName).map(p=>({"이름":p.name,"영문 이름":p.nameEn||"","직급":p.rank||"","상태":p.status,"과제":p.project||"","계약시작":p.contractStart||"","계약종료":p.contractEnd||"","연락처":p.contact||"","이메일":p.email||"","메모":p.note||""})));
+    add("사람",S.people.slice().sort(byName).map(p=>({"이름":p.name,"영문 이름":p.nameEn||"","직급":p.rank||"","상태":p.status,"과제":p.project||"","계약시작":p.contractStart||"","계약종료":p.contractEnd||"","연락처":p.contact||"","개인 이메일":p.email||"","Knox 메일":p.knox||"","RBS/SSO ID":p.ssoId||"","VWP/TOSS ID":p.vwpId||"","메모":p.note||""})));
     add("PC",S.pcs.slice().sort((a,b)=>natural(a.name||"",b.name||"")).map(p=>({"PC이름":p.name,"상태":p.status,"사용자":pname(p.personId),"과제":p.project||"","위치":p.place||"","모델명":p.model||"","제조번호":p.mfgNo||"","시리얼넘버":p.serial||"","MAC 주소":p.mac||"","IP 주소":p.ip||"","반입일":p.inDate||"","메모":p.note||""})));
     const hist=[]; S.pcs.forEach(p=>(p.history||[]).forEach(x=>hist.push({"PC이름":p.name,"날짜":x.date,"이전 사용자":x.from,"새 사용자":x.to,"상태":x.status||"","메모":x.memo||"","기록한 사람":x.by||""})));
     hist.sort((a,b)=>(a["날짜"]||"").localeCompare(b["날짜"]||"")); add("PC변경기록",hist);
@@ -788,6 +802,20 @@ const App={
     catch(e){ toast("파일을 받지 못했어요"); }
   }
 };
+/* 길게 누르기: 사람·PC 목록에서 0.6초 누르면 고치기/삭제 메뉴 */
+(function(){
+  let t=null, el=null, sx=0, sy=0, fired=false;
+  const clear=()=>{ clearTimeout(t); t=null; if(el) el.classList.remove("pressing"); el=null; };
+  document.addEventListener("pointerdown",e=>{
+    const x=e.target.closest("[data-lp]"); if(!x) return;
+    clear(); fired=false; el=x; sx=e.clientX; sy=e.clientY; x.classList.add("pressing");
+    t=setTimeout(()=>{ fired=true; const [kind,id]=x.dataset.lp.split(":"); clear(); if(navigator.vibrate) try{navigator.vibrate(20);}catch(_){} App.lpMenu(kind,id); },600);
+  });
+  document.addEventListener("pointermove",e=>{ if(el&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10)) clear(); });
+  ["pointerup","pointercancel","scroll"].forEach(ev=>document.addEventListener(ev,clear,true));
+  document.addEventListener("click",e=>{ if(fired&&e.target.closest("[data-lp]")){ e.preventDefault(); e.stopPropagation(); fired=false; } },true);
+  document.addEventListener("contextmenu",e=>{ if(e.target.closest("[data-lp]")) e.preventDefault(); });
+})();
 function needAdmin(){ openModal(`<h3>🔒 관리자만 지울 수 있어요</h3><p class="hint">잘못 지우는 걸 막기 위해 삭제는 관리자만 할 수 있어요. 오른쪽 위 ⚙️ ‘관리’에서 관리자 비밀번호를 넣고 관리자 모드를 켠 다음 다시 눌러 주세요.</p><div class="actions"><button class="btn ghost" onclick="App.close()">닫기</button><button class="btn" onclick="App.go('#manage')">관리자 모드 켜러 가기</button></div>`); }
 function stripId(o){ const c=Object.assign({},o); delete c.id; return c; }
 function focusSearch(){ const el=document.querySelector(".search"); if(el){ el.focus(); const v=el.value; el.setSelectionRange(v.length,v.length); } }
