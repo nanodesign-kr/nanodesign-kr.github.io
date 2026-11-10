@@ -7,7 +7,8 @@
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f3f5f9">
+<meta name="theme-color" content="#f3f5f9" id="themeColor">
+<script>try{var t=localStorage.getItem("nd_theme");if(t==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="나노디자인">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,14 +23,27 @@
   --gray:#64748b; --gray-soft:#eef1f5;
   --red:#b91c1c; --red-soft:#fdecec;
   --purple:#7c3aed; --purple-soft:#f1eafe;
-  --r:16px;
+  --card2:#fafbfd; --line2:#cdd4e0; --hdr:rgba(243,245,249,.94);
+  --seat-used-b:#bcd0fb; --seat-used-c:#1e3a8a; --seat-free-b:#cfe9d7;
+  --r:16px; color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#0e131c; --card:#171e2b; --card2:#1d2535; --ink:#e6ebf4; --sub:#97a3b6; --line:#2a3446; --line2:#3a465c; --hdr:rgba(14,19,28,.94);
+  --pri:#6b9bff; --pri-soft:#1c2a47;
+  --green:#4ade80; --green-soft:#12301f;
+  --orange:#fb923c; --orange-soft:#3a2415;
+  --gray:#a3aec0; --gray-soft:#232c3c;
+  --red:#f87171; --red-soft:#3b1a1d;
+  --purple:#b394ff; --purple-soft:#2a2045;
+  --seat-used-b:#34508f; --seat-used-c:#c7d7ff; --seat-free-b:#24573a;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Roboto","Noto Sans KR",system-ui,sans-serif;font-size:14px;line-height:1.55;-webkit-text-size-adjust:100%;word-break:keep-all;overflow-wrap:anywhere}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 .wrap{max-width:860px;margin:0 auto;padding:0 16px 100px}
-header.top{position:sticky;top:0;z-index:20;background:rgba(243,245,249,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top{position:sticky;top:0;z-index:20;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 header.top .in{max-width:860px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:10px}
 .logo{width:38px;height:38px;border-radius:11px;background:var(--pri);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
 .brand{display:flex;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;flex:none}
@@ -39,18 +53,18 @@ header.top .in{max-width:860px;margin:0 auto;padding:12px 16px;display:flex;alig
 .who{margin-left:auto;font-size:13px;color:var(--sub);text-align:right}
 .who b{color:var(--ink)}
 .who{white-space:nowrap;display:flex;align-items:center;gap:8px}
-.gear{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;text-decoration:none;font-size:18px;flex:none}
+.gear{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;text-decoration:none;font-size:18px;flex:none}
 .gear.on{border-color:var(--pri);background:var(--pri-soft)}
 .whoname{text-align:right}
-.grp{background:#fff;border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
-.grp-h{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);background:#fafbfd}
+.grp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.grp-h{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--card2)}
 .grp-h b{flex:1;font-size:15px}
 .grp .item{border:0;border-radius:0;border-bottom:1px solid var(--line)}
 .grp .item:last-child{border-bottom:0}
 [data-lp]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 [data-lp].pressing{background:var(--pri-soft)}
 @media(max-width:480px){.ttl small{display:none}}
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
 nav.tabs .in{max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
 nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 9px;text-decoration:none;color:var(--sub);font-size:11px;font-weight:700;white-space:nowrap;word-break:keep-all;letter-spacing:-.4px;min-width:0;overflow:hidden}
 nav.tabs a span.t{display:block;white-space:nowrap}
@@ -65,12 +79,12 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .g2{grid-template-columns:repeat(2,1fr)}
 @media(min-width:640px){.g4{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:639px){.g4{grid-template-columns:repeat(2,1fr)}}
-.stat{display:block;text-align:left;border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:16px;text-decoration:none;color:inherit}
+.stat{display:block;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:var(--r);padding:16px;text-decoration:none;color:inherit}
 .stat .k{font-size:13px;color:var(--sub);font-weight:700}
 .stat .v{font-size:26px;font-weight:800;line-height:1.15;margin-top:4px}
 .stat .s{font-size:12px;color:var(--sub)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:12px;padding:10px 16px;font-weight:700;font-size:14px;min-height:44px;background:var(--pri);color:#fff}
-.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
 .btn.soft{background:var(--pri-soft);color:var(--pri)}
 .btn.danger{background:var(--red-soft);color:var(--red)}
 .btn.big{width:100%;font-size:15px;min-height:50px}
@@ -86,26 +100,26 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .b-red{background:var(--red-soft);color:var(--red)}
 .b-purple{background:var(--purple-soft);color:var(--purple)}
 .list{display:grid;gap:10px}
-.item{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;width:100%;text-align:left}
+.item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;width:100%;text-align:left}
 .item .main{flex:1;min-width:0}
 .item .nm{font-weight:800;font-size:15px}
 .item .meta{font-size:12px;color:var(--sub);overflow:hidden;text-overflow:ellipsis}
 .item .arrow{color:#9aa3b2;font-size:20px}
-.search{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;font-size:16px}
+.search{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card);font-size:16px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-weight:700;font-size:12px}
-.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-weight:700;font-size:12px}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .alert{display:flex;gap:12px;align-items:flex-start;border-radius:var(--r);padding:14px 16px;border:1px solid}
 .alert .ic{font-size:18px;line-height:1.3}
-.alert.warn{background:var(--orange-soft);border-color:#fbd5b8}
-.alert.info{background:var(--pri-soft);border-color:#c9dafc}
-.alert.ok{background:var(--green-soft);border-color:#bfe6cc}
-.alert.err{background:var(--red-soft);border-color:#f5c2c2}
+.alert.warn{background:var(--orange-soft);border-color:rgba(234,88,12,.3)}
+.alert.info{background:var(--pri-soft);border-color:rgba(37,99,235,.3)}
+.alert.ok{background:var(--green-soft);border-color:rgba(21,128,61,.3)}
+.alert.err{background:var(--red-soft);border-color:rgba(185,28,28,.3)}
 .alert b{display:block}
-.empty{text-align:center;color:var(--sub);padding:28px 12px;border:2px dashed var(--line);border-radius:var(--r);background:#fff}
+.empty{text-align:center;color:var(--sub);padding:28px 12px;border:2px dashed var(--line);border-radius:var(--r);background:var(--card)}
 .empty .ic{font-size:33px}
 /* guide */
-.gsec{background:#fff;border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.gsec{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
 .gsec>summary{list-style:none;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer}
 .gsec>summary::-webkit-details-marker{display:none}
 .gnum{width:32px;height:32px;border-radius:50%;background:var(--pri);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
@@ -116,7 +130,7 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .gdesc{background:var(--gray-soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--sub);margin:10px 0}
 .step{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
 .step:last-child{border-bottom:0}
-.chk{width:28px;height:28px;border-radius:9px;border:2px solid #b8c0cf;background:#fff;flex:none;display:grid;place-items:center;font-size:17px;color:#fff;margin-top:1px}
+.chk{width:28px;height:28px;border-radius:9px;border:2px solid var(--line2);background:var(--card);flex:none;display:grid;place-items:center;font-size:17px;color:#fff;margin-top:1px}
 .chk.on{background:var(--green);border-color:var(--green)}
 .step .st{font-weight:700}
 .step.on .st{color:var(--sub);text-decoration:line-through}
@@ -131,23 +145,23 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .seat{border-radius:14px;padding:10px 8px;min-height:84px;text-align:center;border:2px solid;display:flex;flex-direction:column;justify-content:center;gap:2px}
 .seat .sn{font-size:11px;font-weight:800;opacity:.8}
 .seat .sp2{font-size:13px;font-weight:800;word-break:keep-all}
-.seat.free{background:#fff;border-color:#cfe9d7;border-style:dashed;color:var(--green)}
-.seat.used{background:var(--pri-soft);border-color:#bcd0fb;color:#1e3a8a}
+.seat.free{background:var(--card);border-color:var(--seat-free-b);border-style:dashed;color:var(--green)}
+.seat.used{background:var(--pri-soft);border-color:var(--seat-used-b);color:var(--seat-used-c)}
 /* modal */
 .ov{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center}
 @media(min-width:640px){.ov{align-items:center}}
-.sheet{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom))}
+.sheet{background:var(--card);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom))}
 @media(min-width:640px){.sheet{border-radius:22px}}
 .sheet h3{margin:0 0 4px;font-size:17px;font-weight:800}
 .sheet .hint{color:var(--sub);font-size:13px;margin:0 0 14px}
 .f{margin-bottom:14px}
 .f label{display:block;font-weight:700;margin-bottom:6px}
 .f label em{font-style:normal;color:var(--sub);font-weight:500;font-size:13px}
-.f input,.f select,.f textarea{width:100%;border:1.5px solid #cdd4e0;border-radius:12px;padding:12px;background:#fff;font-size:16px}
+.f input,.f select,.f textarea{width:100%;border:1.5px solid var(--line2);border-radius:12px;padding:12px;background:var(--card);font-size:16px}
 .f textarea{min-height:84px;resize:vertical}
 .f input:focus,.f select:focus,.f textarea:focus{outline:3px solid #bfd3ff;border-color:var(--pri)}
 .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.opt{border:2px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;font-weight:700;background:#fff}
+.opt{border:2px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;font-weight:700;background:var(--card)}
 .opt.on{border-color:var(--pri);background:var(--pri-soft);color:var(--pri)}
 .actions{display:flex;gap:10px;margin-top:18px}
 .actions .btn{flex:1}
@@ -157,12 +171,45 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .hist{border-left:3px solid var(--line);padding-left:14px;margin-left:6px}
 .hist div{padding:6px 0;font-size:13px}
 .hist small{color:var(--sub);display:block}
-.erow{border:1.5px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px;background:#fafbfd}
+.erow{border:1.5px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px;background:var(--card2)}
 .erow .row input{flex:1}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1b2333;color:#fff;padding:10px 16px;font-size:13px;border-radius:12px;font-weight:700;z-index:70;max-width:90vw;box-shadow:0 6px 24px rgba(0,0,0,.2)}
 .ro{background:#fff7e6;border-bottom:1px solid #f6dfae;color:#8a5a00;font-size:14px;padding:8px 16px;text-align:center}
 .help li{margin-bottom:6px}
 .muted{color:var(--sub)}
+.theme-sw{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin:16px 0 0}
+.theme-sw button{flex:1;border:0;background:transparent;border-radius:9px;padding:8px 6px;font-weight:700;font-size:13px;color:var(--sub)}
+.theme-sw button.on{background:var(--pri);color:#fff}
+a.lnk{display:inline-flex;align-items:center;gap:4px;color:var(--pri);font-weight:700;text-decoration:underline;word-break:break-all;padding:2px 0}
+.lnk-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0}
+.lnk-note{font-size:11px;color:var(--orange);font-weight:700}
+.copy{border:1px solid var(--line);background:var(--card);border-radius:8px;font-size:11px;padding:2px 8px;color:var(--sub)}
+.notice{background:var(--pri-soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--ink);margin:10px 0;white-space:pre-wrap}
+/* seat map */
+.vsw{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
+.vsw button{flex:1;border:0;background:transparent;border-radius:9px;padding:8px;font-weight:700;font-size:13px;color:var(--sub)}
+.vsw button.on{background:var(--ink);color:var(--bg)}
+.fmap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.zbox{border:2px solid var(--line2);border-radius:14px;padding:10px;background:var(--card);min-height:120px}
+.zbox h4{margin:0 0 8px;font-size:14px;display:flex;align-items:center;gap:6px}
+.zbox h4 .muted{font-size:12px;font-weight:500}
+.zbox.empty-z{border-style:dashed;opacity:.6}
+.mseats{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}
+.ms{border-radius:9px;border:2px solid;min-height:46px;padding:3px 2px;font-size:10px;line-height:1.2;text-align:center;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.ms b{font-size:11px}
+.ms.free{border-color:var(--seat-free-b);border-style:dashed;color:var(--green);background:var(--card)}
+.ms.used{border-color:var(--seat-used-b);background:var(--pri-soft);color:var(--seat-used-c)}
+.ms.mine{outline:3px solid var(--orange);outline-offset:1px}
+.door{grid-column:1/-1;text-align:center;font-size:11px;color:var(--sub);border-top:2px dashed var(--line2);padding-top:4px}
+/* photos */
+.phs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin:8px 0}
+.ph{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--gray-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--sub);padding:0}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph.add{border:2px dashed var(--line2);background:var(--card);font-weight:700;color:var(--pri);font-size:13px}
+.phbig{width:100%;border-radius:12px;display:block;margin:8px 0}
+.pchk{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--card)}
+.pchk input{width:20px;height:20px;flex:none}
+.pchk small{color:var(--sub)}
 .tag-admin{font-size:11px;background:var(--purple-soft);color:var(--purple);border-radius:6px;padding:1px 6px;font-weight:800;margin-left:4px}
 </style>
 </head>
@@ -204,15 +251,17 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.08-1";
+const APP_VER="2026.11.11-1";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
   connected:false, slow:false, err:null,
-  pcs:[], people:[], seats:[], guide:null, progress:{}, admins:[], myPid:null,
-  got:{}, pcFilter:"전체", pcQ:"", pQ:"", pFilter:"전체", guideEdit:false, names:{}
+  pcs:[], people:[], seats:[], projects:[], guide:null, progress:{}, myPid:null,
+  pcFilter:"전체", pcQ:"", pQ:"", pFilter:"전체", guideEdit:false,
+  openSecs:null, seatView:"map", seatFloor:null, photoCache:{},
+  writeSeq:0, lastSig:"", progDirty:false, progTimer:null
 };
-const LS_KEY="nd_me_pid", LS_PW="nd_pw", LS_ADMIN="nd_admin", LS_API="nd_api";
+const LS_KEY="nd_me_pid", LS_PW="nd_pw", LS_ADMIN="nd_admin", LS_API="nd_api", LS_THEME="nd_theme";
 const ls={get(k){try{return localStorage.getItem(k)||"";}catch(e){return "";}},set(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k);}catch(e){}}};
 
 /* ---------- 도우미 ---------- */
@@ -233,6 +282,19 @@ const pname=id=>{const p=person(id);return p?p.name:"";};
 const isAdmin=()=>S.adminOk;
 const byName=(a,b)=>(a.name||"").localeCompare(b.name||"","ko");
 const natural=(a,b)=>String(a).localeCompare(String(b),"ko",{numeric:true});
+const ZONES=["A","B","C","D"];
+function seatFloor(s){ if(s.floor) return String(s.floor); const m=String(s.zone||"").match(/(\d+)\s*층/); return m?m[1]:""; }
+function seatZone(s){ if(s.floor) return s.zone||""; const m=String(s.zone||"").match(/([A-Da-d])\s*(존|구역|zone)?/); return m?m[1].toUpperCase():""; }
+function seatLabel(s){ if(!s) return ""; const f=seatFloor(s), z=seatZone(s); return (f||z)?`${f?f+"층 ":""}${z?z+"존 ":""}${s.num}번`:`${s.zone||""} ${s.num}번`.trim(); }
+function projectNames(){ const set=new Set(); S.projects.forEach(p=>p.name&&set.add(p.name.trim())); S.people.forEach(p=>p.project&&set.add(p.project.trim())); S.pcs.forEach(p=>p.project&&set.add(p.project.trim())); return [...set].filter(Boolean).sort(natural); }
+const projByName=n=>S.projects.find(p=>(p.name||"").trim()===(n||"").trim());
+/* 과제명 콤보박스: 목록에서 고르거나 '새 과제명 직접 입력' */
+function projSelect(id,cur,emptyLabel){
+  const names=projectNames(); cur=(cur||"").trim();
+  if(cur&&!names.includes(cur)) names.push(cur);
+  return `<select id="${id}" onchange="App.projSel('${id}')"><option value="">${emptyLabel||"(과제 없음)"}</option>${names.map(n=>`<option value="${h(n)}" ${n===cur?"selected":""}>${h(n)}</option>`).join("")}<option value="__new">＋ 새 과제명 직접 입력</option></select><input id="${id}New" style="display:none;margin-top:8px" placeholder="새 과제명 (예: A사 PLL 과제)">`;
+}
+function projVal(id){ const v=val(id); return v==="__new"?val(id+"New"):v; }
 
 /* ---------- 서버(구글 시트) ---------- */
 async function api(body){
@@ -244,8 +306,10 @@ async function api(body){
 }
 function applyData(d,admin){
   const arr=o=>Object.keys(o||{}).map(id=>Object.assign({},o[id],{id}));
-  S.pcs=arr(d.pcs); S.people=arr(d.people); S.seats=arr(d.seats);
+  S.pcs=arr(d.pcs); S.people=arr(d.people); S.seats=arr(d.seats); S.projects=arr(d.projects);
+  const keepMine=S.progDirty&&S.myPid?S.progress[S.myPid]:null;
   S.progress={}; Object.keys(d.progress||{}).forEach(id=>S.progress[id]=(d.progress[id].done)||{});
+  if(keepMine) S.progress[S.myPid]=keepMine;
   S.guide=(d.guide||{}).main||null;
   S.adminOk=!!admin;
   if(!admin&&S.adminPw){ S.adminPw=""; ls.set(LS_ADMIN,""); }
@@ -257,9 +321,15 @@ async function load(quiet){
   if(!S.pw){ S.err="login"; render(); return; }
   if(S.busy) return;
   const timer=setTimeout(()=>{ if(!S.connected){ S.slow=true; render(); } },10000);
+  const ws=S.writeSeq;
   try{
-    const j=await api({action:"all"}); applyData(j.data,j.admin);
-    if(!(quiet&&hasModalInput())) render();
+    const j=await api({action:"all"});
+    if(S.writeSeq!==ws||S.busy) return;           /* 그사이 저장이 있었으면 옛날 데이터라 버려요 */
+    const sig=JSON.stringify(j.data)+"|"+j.admin;
+    const changed=sig!==S.lastSig; S.lastSig=sig;
+    applyData(j.data,j.admin);
+    if(quiet&&(!changed||hasModalInput())) return; /* 바뀐 게 없으면 화면을 다시 그리지 않아요 (스크롤 튐 방지) */
+    render();
   }catch(e){
     if(e.code==="auth"){ S.pw=""; ls.set(LS_PW,""); S.err="login"; S.connected=false; render(); }
     else if(!S.connected){ S.err="sub"; render(); }
@@ -267,18 +337,19 @@ async function load(quiet){
   }finally{ clearTimeout(timer); }
 }
 /* 바꾸기: fn(db) 안에서 db.doc("모음/아이디").set(...) / .delete() 를 모아 한 번에 보내요 */
-async function write(fn,okMsg){
+async function write(fn,okMsg,quiet){
   if(!S.connected){ toast("아직 연결되지 않았어요. 잠시 후 다시 해 주세요."); return false; }
-  if(S.saving){ toast("저장하는 중이에요. 잠시만 기다려 주세요."); return false; }
+  if(S.saving){ if(!quiet) toast("저장하는 중이에요. 잠시만 기다려 주세요."); return false; }
   const ops=[];
   const db={doc(path){ const i=path.indexOf("/"), col=path.slice(0,i), id=path.slice(i+1);
     return {set:async d=>{ops.push({op:"set",col,id,data:d});}, delete:async()=>{ops.push({op:"del",col,id});}}; }};
   try{
     await fn(db);
     if(!ops.length) return true;
-    S.busy=true; S.saving=true;
+    S.busy=true; S.saving=true; S.writeSeq++;
     document.querySelectorAll("#modal button").forEach(b=>b.disabled=true);
     const j=await api({action:"batch",ops});
+    S.lastSig=JSON.stringify(j.data)+"|"+j.admin;
     applyData(j.data,j.admin);
     if(okMsg) toast(okMsg);
     render();
@@ -293,10 +364,29 @@ async function write(fn,okMsg){
 }
 function start(){
   S.api=API_URL||ls.get(LS_API); S.pw=ls.get(LS_PW); S.adminPw=ls.get(LS_ADMIN);
+  applyTheme(ls.get(LS_THEME)||"light");
   const v=ls.get(LS_KEY); if(v) S.myPid=v;
   load();
   setInterval(()=>{ if(document.visibilityState==="visible") load(true); },30000);
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") load(true); });
+}
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");
+  const m=$("themeColor"); if(m) m.setAttribute("content",t==="dark"?"#0e131c":"#f3f5f9");
+}
+/* 입주가이드 체크: 화면에 바로 반영하고, 서버 저장은 순서대로 한 번에 보내요 (체크가 풀리는 문제 방지) */
+function queueProgress(){
+  S.progDirty=true; clearTimeout(S.progTimer);
+  S.progTimer=setTimeout(flushProgress,500);
+}
+async function flushProgress(){
+  if(!S.progDirty||!S.myPid) return;
+  if(S.saving){ S.progTimer=setTimeout(flushProgress,600); return; }
+  const pid=S.myPid, cur=Object.assign({},S.progress[pid]||{});
+  const sent=JSON.stringify(cur);
+  const ok=await write(db=>db.doc("progress/"+pid).set({done:cur,updated:today()}),null,true);
+  if(ok&&JSON.stringify(S.progress[pid]||{})===sent){ S.progDirty=false; }
+  else { S.progTimer=setTimeout(flushProgress,ok?50:3000); }
 }
 function setMe(pid){
   S.myPid=pid||null; ls.set(LS_KEY,pid||"");
@@ -323,7 +413,9 @@ function render(){
   }
   if(S.err==="sub") html+=`<div class="alert err" style="margin-top:12px"><span class="ic">⚠️</span><div><b>데이터를 불러오지 못했어요.</b>인터넷 연결을 확인하고 새로고침해 주세요.</div></div>`;
   const fn={home:vHome,guide:vGuide,pcs:vPcs,seats:vSeats,projects:vProjects,people:vPeople,manage:vManage}[S.view]||vHome;
+  const y=window.scrollY;
   v.innerHTML=html+fn();
+  if(y) window.scrollTo(0,y);
 }
 function route(){ const k=(location.hash||"#home").slice(1); S.view=ROUTES.includes(k)?k:"home"; render(); window.scrollTo(0,0); }
 window.addEventListener("hashchange",route);
@@ -337,7 +429,9 @@ function vHome(){
   const ending=S.people.filter(p=>p.status==="테라타워 근무"&&p.contractEnd&&dday(p.contractEnd)<=30).sort((a,b)=>(a.contractEnd||"").localeCompare(b.contractEnd||""));
   const leftover=S.people.filter(p=>p.status!=="테라타워 근무"&&(S.pcs.some(x=>x.personId===p.id&&x.status==="사용중")||S.seats.some(s=>s.personId===p.id)));
   const me=S.myPid&&person(S.myPid);
-  let o=`<h1 class="page">안녕하세요${me?", "+h(me.name)+"님":""} 👋</h1><p class="lead">테라타워 현황을 한눈에 볼 수 있어요. 카드를 누르면 자세히 보여요.</p>`;
+  const dark=document.documentElement.getAttribute("data-theme")==="dark";
+  let o=`<div class="theme-sw" role="group" aria-label="화면 모드"><button class="${dark?"":"on"}" onclick="App.setTheme('light')">☀️ 화이트 모드</button><button class="${dark?"on":""}" onclick="App.setTheme('dark')">🌙 다크 모드</button></div>`;
+  o+=`<h1 class="page">안녕하세요${me?", "+h(me.name)+"님":""} 👋</h1><p class="lead">테라타워 현황을 한눈에 볼 수 있어요. 카드를 누르면 자세히 보여요.</p>`;
   if(!me&&S.people.length) o+=`<div class="alert info" style="margin-bottom:14px"><span class="ic">🙋</span><div style="flex:1"><b>먼저 내 이름을 골라 주세요</b>입주가이드 진행 상황이 내 이름으로 저장돼요.<div style="margin-top:8px"><button class="btn sm" onclick="App.pickMe()">내 이름 고르기</button></div></div></div>`;
   o+=`<div class="grid g4">
     <a class="stat" href="#people"><div class="k">👥 테라타워 근무</div><div class="v">${atTT.length}<span style="font-size:17px">명</span></div><div class="s">전체 ${S.people.length}명</div></a>
@@ -354,7 +448,7 @@ function vHome(){
     <button class="btn soft big" onclick="location.hash='#guide'">📋 처음 왔어요</button>
     <button class="btn soft big" onclick="location.hash='#pcs'">🔁 PC 사용자 바꾸기</button>
     <button class="btn soft big" onclick="location.hash='#seats'">🪑 자리 정하기</button>
-    <button class="btn soft big" onclick="location.hash='#people'">👤 사람 추가하기</button>
+    <button class="btn soft big" onclick="location.hash='#projects';setTimeout(()=>App.editProject(),50)">📁 과제 추가하기</button>
   </div>`;
   o+=`<p class="muted" style="text-align:center;font-size:12px;margin:22px 0 0">앱 버전 ${APP_VER}</p>`;
   return o;
@@ -366,15 +460,17 @@ function vGuide(){
   const secs=gSections(), done=(S.myPid&&S.progress[S.myPid])||{};
   const all=secs.reduce((n,s)=>n+(s.steps||[]).length,0);
   const fin=secs.reduce((n,s)=>n+(s.steps||[]).filter(st=>done[st.id]).length,0);
-  let o=`<h1 class="page">📋 입주가이드</h1><p class="lead">테라타워에 처음 오면 위에서부터 차례대로 하면 돼요. 끝낸 일은 네모를 눌러 ✔ 표시하세요.</p>`;
+  let o=`<h1 class="page">📋 입주가이드</h1><p class="lead">테라타워에 처음 오면 위에서부터 차례대로 하면 돼요. 끝낸 일은 네모를 눌러 ✔ 표시하세요. 🔗 링크를 누르면 사이트가 바로 열려요. <b>사내망 전용</b> 주소는 회사 PC에서만 열리니, 휴대폰에서는 ‘복사’해서 PC로 보내 쓰세요.</p>`;
   if(isAdmin()) o+=`<div class="row" style="margin-bottom:14px"><button class="btn ${S.guideEdit?"":"ghost"}" onclick="App.toggleGuideEdit()">${S.guideEdit?"✅ 편집 끝내기":"✏️ 가이드 내용 고치기"}</button>${S.guideEdit?`<button class="btn soft" onclick="App.editSection(-1)">＋ 새 단계 묶음 추가</button>`:""}</div>`;
   if(!S.myPid&&secs.length) o+=`<div class="alert info" style="margin-bottom:14px"><span class="ic">🙋</span><div style="flex:1"><b>체크하려면 내 이름을 먼저 골라 주세요</b><div style="margin-top:8px"><button class="btn sm" onclick="App.pickMe()">내 이름 고르기</button></div></div></div>`;
   else if(S.myPid&&all) o+=`<div class="card" style="margin-bottom:14px"><div class="row"><b>내 진행 상황</b><span class="sp"></span><b style="color:var(--green)">${fin} / ${all}</b></div><div class="bar" style="margin-top:8px"><i style="width:${all?Math.round(fin/all*100):0}%"></i></div>${fin===all?'<div style="margin-top:8px;color:var(--green);font-weight:700">🎉 모두 끝냈어요! 팀 리더에게 완료를 알려 주세요.</div>':""}</div>`;
   if(!secs.length) return o+`<div class="empty"><div class="ic">📄</div><b>아직 가이드가 없어요.</b><br>${isAdmin()?"위의 ‘가이드 내용 고치기’를 눌러 만들어 주세요.":"관리자가 곧 채워 줄 거예요."}</div>`;
+  if(!S.openSecs){ S.openSecs={}; const f=firstOpen(secs,done); if(f>=0&&secs[f]) S.openSecs[secs[f].id||f]=true; }
   secs.forEach((s,i)=>{
     const steps=s.steps||[], sf=steps.filter(st=>done[st.id]).length, allDone=steps.length&&sf===steps.length;
-    o+=`<details class="gsec" ${S.guideEdit||(!allDone&&i===firstOpen(secs,done))?"open":""}><summary><span class="gnum ${allDone&&S.myPid?"done":""}">${allDone&&S.myPid?"✔":i+1}</span><span class="gt">${h(s.title)}</span><span class="gp">${S.myPid?`${sf}/${steps.length}`:`${steps.length}개`}</span></summary><div class="gbody">`;
-    if(s.desc) o+=`<div class="gdesc">${h(s.desc)}</div>`;
+    const key=s.id||i;
+    o+=`<details class="gsec" data-sec="${h(key)}" ontoggle="App.secToggle(this)" ${S.guideEdit||S.openSecs[key]?"open":""}><summary><span class="gnum ${allDone&&S.myPid?"done":""}">${allDone&&S.myPid?"✔":i+1}</span><span class="gt">${h(s.title)}</span><span class="gp">${S.myPid?`${sf}/${steps.length}`:`${steps.length}개`}</span></summary><div class="gbody">`;
+    if(s.desc) o+=`<div class="gdesc">${linkify(s.desc)}</div>`;
     steps.forEach(st=>{
       const on=!!done[st.id];
       o+=`<div class="step ${on?"on":""}"><button class="chk ${on?"on":""}" aria-label="완료 표시" onclick="App.toggleStep('${h(st.id)}')" ${S.myPid?"":"disabled"}>${on?"✔":""}</button><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${linkify(st.desc)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${h(st.who)}</div>`:""}</div></div>`;
@@ -384,7 +480,14 @@ function vGuide(){
   });
   return o;
 }
-function linkify(t){ return h(t).replace(/https?:\/\/[^\s<]+/g,u=>`<a href="${u}" target="_blank" rel="noopener" style="color:var(--pri);word-break:break-all">${u}</a>`); }
+/* 링크: 누르면 새 창으로 바로 열려요. 사내망 주소는 회사 PC에서만 열린다고 표시해요 */
+function isInternal(u){ return /^https?:\/\/(\d+\.\d+\.\d+\.\d+|[^\/]*\.sec\.samsung\.net|[^\/]*\.samsungds\.net)/i.test(u); }
+function linkify(t){
+  return h(t).replace(/https?:\/\/[^\s<]+/g,raw=>{
+    const u=raw.replace(/&amp;/g,"&"), href=h(u);
+    return `<span class="lnk-row"><a class="lnk" href="${href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 ${raw}</a>${isInternal(u)?`<span class="lnk-note">사내망 전용</span>`:""}<button type="button" class="copy" onclick="event.stopPropagation();App.copy('${href}')">복사</button></span>`;
+  });
+}
 function firstOpen(secs,done){ for(let i=0;i<secs.length;i++){ const st=secs[i].steps||[]; if(!st.length||st.some(x=>!done[x.id])) return i; } return -1; }
 
 /* ---------- PC ---------- */
@@ -394,7 +497,7 @@ function vPcs(bodyOnly){
   if(S.pcFilter!=="전체") list=list.filter(p=>p.status===S.pcFilter);
   const q=S.pcQ.trim().toLowerCase();
   if(q) list=list.filter(p=>[p.name,p.model,p.mfgNo,p.serial,p.mac,p.ip,pname(p.personId),p.project,p.place,p.note].join(" ").toLowerCase().includes(q));
-  let o=`<h1 class="page">💻 PC 현황</h1><p class="lead">PC를 누르면 <b>사용자 바꾸기</b>와 바뀐 기록을 볼 수 있어요.</p>`;
+  let o=`<h1 class="page">💻 PC 현황</h1><p class="lead">PC를 누르면 <b>사용자 바꾸기</b>, 바뀐 기록, <b>📷 사진 추가</b>를 할 수 있어요. 길게 누르면 고치기·삭제가 나와요.</p>`;
   o+=`<div class="row" style="margin-bottom:12px"><input class="search" style="flex:1;min-width:180px" placeholder="🔍 PC 이름, 사용자, 과제로 찾기" value="${h(S.pcQ)}" oninput="App.pcSearch(this.value)"><button class="btn" onclick="App.editPc()">＋ PC 등록</button></div>`;
   const head=o; o="";
   o+=`<div class="chips">${["전체",...Object.keys(PC_ST)].map(k=>`<button class="chip ${S.pcFilter===k?"on":""}" onclick="App.pcFilter('${k}')">${k==="대기"?"대기(남는 PC)":k} ${counts[k]}</button>`).join("")}</div>`;
@@ -409,16 +512,37 @@ function pcItem(p){
 }
 
 /* ---------- 좌석 ---------- */
+function seatFloors(){ const f=[...new Set(S.seats.map(s=>seatFloor(s)||"기타"))]; return f.sort(natural); }
+function seatTile(s,cls){
+  const n=pname(s.personId), mine=s.personId&&s.personId===S.myPid;
+  return `<button class="${cls} ${n?"used":"free"} ${mine?"mine":""}" onclick="App.seatDetail('${h(s.id)}')" aria-label="${h(seatLabel(s))} ${h(n||"빈자리")}">${cls==="ms"?`<b>${h(s.num)}</b><span>${n?h(n.slice(0,3)):"빈"}</span>`:`<span class="sn">${h(s.num)}번</span><span class="sp2">${n?h(n):"빈자리"}</span>`}</button>`;
+}
 function vSeats(){
-  const zones={}; S.seats.forEach(s=>{ const z=s.zone||"기타"; (zones[z]=zones[z]||[]).push(s); });
-  const used=S.seats.filter(s=>s.personId).length;
-  let o=`<h1 class="page">🪑 좌석 현황</h1><p class="lead">자리를 누르면 앉을 사람을 정하거나 비울 수 있어요. <span class="badge b-green">빈자리</span> <span class="badge b-blue">사용 중</span></p>`;
-  o+=`<div class="card" style="margin-bottom:16px"><div class="row"><b>사용 중 ${used}석 · 빈자리 ${S.seats.length-used}석</b><span class="sp"></span>${isAdmin()?`<button class="btn sm" onclick="App.addSeats()">＋ 좌석 만들기</button>`:""}</div></div>`;
-  if(!S.seats.length) return o+`<div class="empty"><div class="ic">🪑</div><b>등록된 좌석이 없어요.</b><br>${isAdmin()?"‘＋ 좌석 만들기’로 구역과 번호를 한 번에 만들 수 있어요.":"관리자가 좌석을 만들면 여기에 보여요."}</div>`;
-  Object.keys(zones).sort(natural).forEach(z=>{
-    const arr=zones[z].sort((a,b)=>natural(a.num,b.num));
-    o+=`<div class="zone"><h3>📍 ${h(z)} <span class="muted" style="font-weight:500;font-size:14px">(${arr.filter(s=>s.personId).length}/${arr.length})</span></h3><div class="seats">`+
-      arr.map(s=>{ const n=pname(s.personId); return `<button class="seat ${n?"used":"free"}" onclick="App.seatDetail('${h(s.id)}')"><span class="sn">${h(s.num)}번</span><span class="sp2">${n?h(n):"빈자리"}</span></button>`; }).join("")+`</div></div>`;
+  const used=S.seats.filter(s=>s.personId).length, floors=seatFloors();
+  if(!S.seatFloor||!floors.includes(S.seatFloor)) S.seatFloor=floors[0]||null;
+  const my=S.myPid&&S.seats.find(s=>s.personId===S.myPid);
+  let o=`<h1 class="page">🪑 좌석 현황</h1><p class="lead">자리를 누르면 앉을 사람을 정하거나 비울 수 있어요. <span class="badge b-green">빈자리</span> <span class="badge b-blue">사용 중</span>${my?` <span class="badge b-orange">내 자리: ${h(seatLabel(my))}</span>`:""}</p>`;
+  o+=`<div class="card" style="margin-bottom:12px"><div class="row"><b>사용 중 ${used}석 · 빈자리 ${S.seats.length-used}석</b><span class="sp"></span><button class="btn sm" onclick="App.addSeats()">＋ 좌석 입력</button></div></div>`;
+  if(!S.seats.length) return o+`<div class="empty"><div class="ic">🪑</div><b>등록된 좌석이 없어요.</b><br>‘＋ 좌석 입력’에서 층, 존(A~D), 좌석번호를 넣으면 배치도가 만들어져요.</div>`;
+  o+=`<div class="vsw"><button class="${S.seatView==="map"?"on":""}" onclick="App.seatViewSet('map')">🗺️ 배치도</button><button class="${S.seatView==="list"?"on":""}" onclick="App.seatViewSet('list')">📋 목록</button></div>`;
+  if(floors.length>1||S.seatView==="map") o+=`<div class="chips">${floors.map(f=>{ const arr=S.seats.filter(s=>(seatFloor(s)||"기타")===f); return `<button class="chip ${S.seatFloor===f?"on":""}" onclick="App.seatFloorSet('${h(f)}')">${f==="기타"?"기타":h(f)+"층"} ${arr.filter(s=>s.personId).length}/${arr.length}</button>`; }).join("")}</div>`;
+  if(S.seatView==="map"){
+    const fl=S.seatFloor, arr=S.seats.filter(s=>(seatFloor(s)||"기타")===fl);
+    const zs=ZONES.slice(); arr.forEach(s=>{ const z=seatZone(s)||"기타"; if(!zs.includes(z)) zs.push(z); });
+    o+=`<div class="fmap">`+zs.map(z=>{
+      const za=arr.filter(s=>(seatZone(s)||"기타")===z).sort((a,b)=>natural(a.num,b.num));
+      if(!za.length&&!ZONES.includes(z)) return "";
+      return `<div class="zbox ${za.length?"":"empty-z"}"><h4>${h(z)}존 <span class="muted">${za.filter(s=>s.personId).length}/${za.length}</span></h4>${za.length?`<div class="mseats">${za.map(s=>seatTile(s,"ms")).join("")}</div>`:`<div class="muted" style="font-size:12px">좌석 없음</div>`}</div>`;
+    }).join("")+`<div class="door">⬇ ${fl==="기타"?"":h(fl)+"층 "}배치도 (A·B·C·D존 위치는 실제와 다를 수 있어요)</div></div>`;
+    return o;
+  }
+  floors.forEach(f=>{
+    const fa=S.seats.filter(s=>(seatFloor(s)||"기타")===f);
+    const zs=[...new Set(fa.map(s=>seatZone(s)||"기타"))].sort(natural);
+    zs.forEach(z=>{
+      const arr=fa.filter(s=>(seatZone(s)||"기타")===z).sort((a,b)=>natural(a.num,b.num));
+      o+=`<div class="zone"><h3>📍 ${f==="기타"?"":h(f)+"층 "}${h(z)}존 <span class="muted" style="font-weight:500;font-size:13px">(${arr.filter(s=>s.personId).length}/${arr.length})</span></h3><div class="seats">${arr.map(s=>seatTile(s,"seat")).join("")}</div></div>`;
+    });
   });
   return o;
 }
@@ -428,23 +552,27 @@ function personRow(p,withProject){
   const st=P_ST[p.status]||{c:"b-gray"}, n=dday(p.contractEnd);
   const pcs=S.pcs.filter(x=>x.personId===p.id).map(x=>x.name), seat=S.seats.find(s=>s.personId===p.id);
   const period=(p.contractStart||p.contractEnd)?`📅 ${fmtDate(p.contractStart)} ~ ${fmtDate(p.contractEnd)}`:"";
-  const meta=[withProject&&p.project?"📁 "+h(p.project):"",period,"💻 "+(pcs.length?h(pcs.join(", ")):"-"),"🪑 "+(seat?h((seat.zone||"")+" "+seat.num+"번"):"-")].filter(Boolean).join(" · ");
+  const meta=[withProject&&p.project?"📁 "+h(p.project):"",period,"💻 "+(pcs.length?h(pcs.join(", ")):"-"),"🪑 "+(seat?h(seatLabel(seat)):"-")].filter(Boolean).join(" · ");
   return `<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">👤</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${st.c}">${h(p.status||"-")}</span>${p.contractEnd&&n!=null&&n<=30?` <span class="badge ${n<0?"b-red":"b-orange"}">${ddayText(n)}</span>`:""}</div><div class="meta">${meta}</div></div><span class="arrow">›</span></button>`;
 }
 function vProjects(){
-  let o=`<h1 class="page">📁 과제 현황</h1><p class="lead">과제별로 누가 참여하고 있는지, 계약이 언제 끝나는지 볼 수 있어요.</p>`;
-  o+=`<div class="row" style="margin-bottom:14px"><span class="sp"></span><button class="btn" onclick="App.editPerson()">＋ 사람 추가</button></div>`;
-  if(!S.people.length) return o+`<div class="empty"><div class="ic">📁</div><b>등록된 사람이 없어요.</b><br>‘＋ 사람 추가’에서 이름과 과제를 넣어 주세요.</div>`;
-  const g={}; S.people.forEach(p=>{ const k=(p.project||"").trim()||"__none"; (g[k]=g[k]||[]).push(p); });
-  const keys=Object.keys(g).filter(k=>k!=="__none").sort(natural); if(g.__none) keys.push("__none");
-  o+=`<div class="card" style="margin-bottom:14px"><b>진행 중인 과제 ${keys.filter(k=>k!=="__none").length}개 · 참여 인원 ${S.people.filter(p=>(p.project||"").trim()).length}명</b></div>`;
-  keys.forEach(k=>{
-    const arr=g[k].sort(byName), tt=arr.filter(p=>p.status==="테라타워 근무").length;
-    const ends=arr.map(p=>p.contractEnd).filter(Boolean).sort(), last=ends[ends.length-1];
-    o+=`<div class="grp"><div class="grp-h"><b>${k==="__none"?"🕓 과제 배정 안 됨":"📁 "+h(k)}</b><span class="badge b-gray">${arr.length}명</span>${tt?`<span class="badge b-blue">테라타워 ${tt}</span>`:""}</div>`;
-    if(last&&k!=="__none") o+=`<div class="muted" style="font-size:13px;padding:8px 14px 0">마지막 계약 종료 ${fmtDate(last)} (${ddayText(dday(last))})</div>`;
-    o+=arr.map(p=>personRow(p,false)).join("")+`</div>`;
+  let o=`<h1 class="page">📁 과제 현황</h1><p class="lead">과제별로 누가 참여하고 있는지, 기간과 계약이 언제 끝나는지 볼 수 있어요. 과제 이름을 누르면 과제 정보를 고칠 수 있어요.</p>`;
+  o+=`<div class="row" style="margin-bottom:14px"><span class="sp"></span><button class="btn" onclick="App.editProject()">＋ 과제 추가</button></div>`;
+  const names=projectNames();
+  const none=S.people.filter(p=>!(p.project||"").trim()).sort(byName);
+  if(!names.length&&!S.people.length) return o+`<div class="empty"><div class="ic">📁</div><b>등록된 과제가 없어요.</b><br>‘＋ 과제 추가’에서 과제명과 참여 인원을 넣어 주세요.</div>`;
+  o+=`<div class="card" style="margin-bottom:14px"><b>과제 ${names.length}개 · 참여 인원 ${S.people.filter(p=>(p.project||"").trim()).length}명${none.length?` · 배정 안 됨 ${none.length}명`:""}</b></div>`;
+  names.forEach(k=>{
+    const pj=projByName(k)||{}, arr=S.people.filter(p=>(p.project||"").trim()===k).sort(byName), tt=arr.filter(p=>p.status==="테라타워 근무").length;
+    const ends=arr.map(p=>p.contractEnd).filter(Boolean).sort(), last=pj.end||ends[ends.length-1];
+    const info=[pj.client?"🏢 "+h(pj.client):"",pj.place?"📍 "+h(pj.place):"",(pj.start||pj.end)?`📅 ${fmtDate(pj.start)} ~ ${fmtDate(pj.end)}`:""].filter(Boolean).join(" · ");
+    o+=`<div class="grp"><button class="grp-h" style="width:100%;border:0;text-align:left;cursor:pointer" data-name="${h(k)}" onclick="App.editProject(this.dataset.name)"><b>📁 ${h(k)}</b><span class="badge b-gray">${arr.length}명</span>${tt?`<span class="badge b-blue">테라타워 ${tt}</span>`:""}<span class="muted" style="font-size:12px">✏️</span></button>`;
+    if(info) o+=`<div class="muted" style="font-size:12px;padding:8px 14px 0">${info}</div>`;
+    if(last) o+=`<div class="muted" style="font-size:12px;padding:4px 14px 0">${pj.end?"과제 종료":"마지막 계약 종료"} ${fmtDate(last)} (${ddayText(dday(last))})</div>`;
+    o+=arr.length?arr.map(p=>personRow(p,false)).join(""):`<div class="muted" style="padding:12px 14px;font-size:13px">참여 인원이 없어요. 과제 이름을 눌러 인원을 넣어 주세요.</div>`;
+    o+=`</div>`;
   });
+  if(none.length) o+=`<div class="grp"><div class="grp-h"><b>🕓 과제 배정 안 됨</b><span class="badge b-gray">${none.length}명</span></div>${none.map(p=>personRow(p,false)).join("")}</div>`;
   return o;
 }
 
@@ -474,7 +602,7 @@ function vManage(){
   const me=S.myPid&&person(S.myPid);
   let o=`<h1 class="page">⚙️ 관리</h1><p class="lead">내 이름 설정, 관리자 지정, 엑셀 백업을 할 수 있어요.</p>`;
   o+=`<h2 class="sec">🙋 나는 누구인가요?</h2><div class="card"><div class="row"><div style="flex:1">${me?`지금 <b>${h(me.name)}</b>(으)로 설정되어 있어요.`:"아직 이름을 고르지 않았어요."}</div><button class="btn sm" onclick="App.pickMe()">${me?"바꾸기":"내 이름 고르기"}</button></div></div>`;
-  o+=`<h2 class="sec">👑 관리자 모드</h2><div class="card"><p class="muted" style="margin-top:0">관리자 모드에서는 <b>입주가이드 고치기, 좌석 만들기, 삭제</b>를 할 수 있어요. 관리자 비밀번호가 필요해요.</p>`;
+  o+=`<h2 class="sec">👑 관리자 모드</h2><div class="card"><p class="muted" style="margin-top:0">관리자 모드에서는 <b>입주가이드 고치기, 과제·사람·PC·좌석 삭제</b>를 할 수 있어요. 관리자 비밀번호가 필요해요.</p>`;
   o+=isAdmin()?`<div class="row"><span class="badge b-purple">👑 관리자 모드 켜짐</span><span class="sp"></span><button class="btn sm ghost" onclick="App.adminOff()">끄기</button></div>`
     :`<div class="row"><input id="adPw" type="password" class="search" style="flex:1;min-width:160px" placeholder="관리자 비밀번호" onkeydown="if(event.key==='Enter')App.adminOn()"><button class="btn" onclick="App.adminOn()">켜기</button></div>`;
   o+=`</div>`;
@@ -485,7 +613,7 @@ function vManage(){
   o+=`<h2 class="sec">❓ 사용법</h2><div class="card help"><ol style="margin:0;padding-left:20px">
     <li><b>처음 왔다면</b> → 오른쪽 위 ⚙️ ‘관리’에서 내 이름을 고르고, ‘입주가이드’를 위에서부터 따라 하세요.</li>
     <li><b>PC 주인이 바뀌면</b> → ‘PC’에서 그 PC를 누르고 <b>사용자 바꾸기</b>. 기록이 자동으로 남아요.</li>
-    <li><b>자리를 옮기면</b> → ‘좌석’에서 새 자리를 누르고 이름을 고르세요. 예전 자리는 자동으로 비워져요.</li>
+    <li><b>자리를 옮기면</b> → ‘좌석’ 배치도에서 새 자리를 누르고 이름을 고르세요. 예전 자리는 자동으로 비워져요. 자리가 없으면 ‘＋ 좌석 입력’으로 층·존·번호를 넣으세요.</li>
     <li><b>외부 과제로 나가면</b> → ‘과제’나 ‘인원’에서 이름을 눌러 상태를 <b>외부 과제</b>로 바꾸면 PC·좌석 비우기를 도와줘요.</li>
   </ol></div>`;
   return o;
@@ -543,13 +671,19 @@ const App={
 
   /* 가이드 */
   toggleGuideEdit(){ S.guideEdit=!S.guideEdit; render(); },
-  async toggleStep(stepId){
+  toggleStep(stepId){
     if(!S.myPid){ App.pickMe(); return; }
     const cur=Object.assign({},S.progress[S.myPid]||{});
-    if(cur[stepId]) delete cur[stepId]; else cur[stepId]=true;
-    S.progress[S.myPid]=cur; render();
-    await write(db=>db.doc("progress/"+S.myPid).set({done:cur,updated:today()}));
+    if(cur[stepId]){
+      openModal(`<h3>체크를 해제할까요?</h3><p class="hint">이미 끝낸 일로 표시되어 있어요. 실수로 누른 거면 ‘그대로 두기’를 눌러 주세요.</p><div class="actions"><button class="btn" onclick="App.close()">그대로 두기</button><button class="btn ghost" onclick="App._uncheck('${h(stepId)}')">체크 해제</button></div>`);
+      return;
+    }
+    cur[stepId]=true; S.progress[S.myPid]=cur; render(); queueProgress();
   },
+  _uncheck(stepId){ const cur=Object.assign({},S.progress[S.myPid]||{}); delete cur[stepId]; S.progress[S.myPid]=cur; closeModal(); render(); queueProgress(); },
+  secToggle(el){ if(!S.openSecs) S.openSecs={}; S.openSecs[el.dataset.sec]=el.open; },
+  setTheme(t){ ls.set(LS_THEME,t); applyTheme(t); render(); },
+  async copy(text){ try{ await navigator.clipboard.writeText(text); toast("주소를 복사했어요"); }catch(e){ const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); toast("주소를 복사했어요");}catch(_){toast("복사하지 못했어요");} ta.remove(); } },
   editSection(i){
     if(!isAdmin()) return;
     const s=i>=0?JSON.parse(JSON.stringify(gSections()[i])):{id:uidGen(),title:"",desc:"",steps:[{id:uidGen(),title:"",desc:"",who:""}]};
@@ -607,10 +741,12 @@ const App={
         <dt>반입일</dt><dd>${fmtDate(p.inDate)}</dd>
         <dt>메모</dt><dd style="white-space:pre-wrap">${h(p.note||"-")}</dd>
       </dl>
+      ${photoSection("pc",id,p.photos)}
       <b>📜 바뀐 기록</b>
       ${hist.length?`<div class="hist" style="margin-top:8px">${hist.map(x=>`<div><b>${h(x.from||"없음")} → ${h(x.to||"없음")}</b>${x.memo?" · "+h(x.memo):""}<small>${fmtDate(x.date)}${x.status?" · "+h(x.status):""}${x.by?" · 기록: "+h(x.by):""}</small></div>`).join("")}</div>`:`<p class="muted">아직 기록이 없어요.</p>`}
       <div class="actions"><button class="btn ghost" onclick="App.editPc('${h(id)}')">✏️ 정보 고치기</button><button class="btn danger" onclick="App.delPc('${h(id)}')">삭제</button></div>
       <div class="actions" style="margin-top:8px"><button class="btn ghost" onclick="App.close()">닫기</button></div>`);
+    loadThumbs();
   },
   changeUser(id){
     const p=S.pcs.find(x=>x.id===id); if(!p) return;
@@ -618,7 +754,7 @@ const App={
       <div class="f"><label>새 사용자</label><select id="cuPid">${personOptions("", "(아무도 안 씀 → 남는 PC로)")}</select></div>
       <div class="f"><label>상태</label>${optButtons("cuSt",Object.keys(PC_ST),"사용중")}</div>
       <div class="f"><label>바꾼 날짜</label><input type="date" id="cuDate" value="${today()}"></div>
-      <div class="f"><label>과제 <em>(선택)</em></label><input id="cuProj" value="${h(p.project||"")}" placeholder="예) A사 PLL 과제"></div>
+      <div class="f"><label>과제 <em>(선택)</em></label>${projSelect("cuProj",p.project)}</div>
       <div class="f"><label>메모 <em>(선택)</em></label><input id="cuMemo" placeholder="예) 김OO 외부 과제로 이동해서 인계"></div>
       <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._saveChange('${h(id)}')">바꾸기</button></div>`);
     $("cuPid").addEventListener("change",e=>{ const v=e.target.value?"사용중":"대기"; document.querySelectorAll('[data-opt="cuSt"] .opt').forEach(b=>{b.classList.toggle("on",b.dataset.v===v)}); $("cuSt").value=v; });
@@ -628,7 +764,7 @@ const App={
     const p=S.pcs.find(x=>x.id===id); if(!p) return;
     const np=val("cuPid")||null, st=val("cuSt")||(np?"사용중":"대기");
     const hist=(p.history||[]).concat([{date:val("cuDate")||today(),from:pname(p.personId)||"",to:pname(np)||"",status:st,memo:val("cuMemo"),by:pname(S.myPid)||""}]).slice(-60);
-    const body=Object.assign({},stripId(p),{personId:np,status:st,project:val("cuProj"),history:hist,updated:today()});
+    const body=Object.assign({},stripId(p),{personId:np,status:st,project:projVal("cuProj"),history:hist,updated:today()});
     if(await write(db=>db.doc("pcs/"+id).set(body),"사용자를 바꿨어요")) closeModal();
   },
   editPc(id){
@@ -638,7 +774,7 @@ const App={
       <div class="f"><label>PC 이름</label><input id="pcName" value="${h(p.name||"")}" placeholder="예) PC-07"></div>
       <div class="f"><label>상태</label>${optButtons("pcSt",Object.keys(PC_ST),p.status)}</div>
       ${id?"":`<div class="f"><label>사용자 <em>(선택)</em></label><select id="pcPid">${personOptions(p.personId)}</select></div>`}
-      <div class="f"><label>과제 <em>(선택)</em></label><input id="pcProj" value="${h(p.project||"")}" placeholder="예) A사 PLL 과제"></div>
+      <div class="f"><label>과제 <em>(선택)</em></label>${projSelect("pcProj",p.project)}</div>
       <div class="f"><label>위치 <em>(선택)</em></label><input id="pcPlace" value="${h(p.place||"")}" placeholder="예) 7층 A구역"></div>
       <div class="f"><label>모델명 <em>(선택)</em></label><input id="pcModel" value="${h(p.model||"")}" placeholder="예) 데스크톱 i7 / 노트북"></div>
       <div class="f"><label>제조번호 <em>(선택)</em></label><input id="pcMfg" value="${h(p.mfgNo||"")}" placeholder="PC 스티커 또는 설정 → 시스템 정보"></div>
@@ -652,7 +788,7 @@ const App={
   async _savePc(id){
     const name=val("pcName"); if(!name){ toast("PC 이름을 써 주세요"); return; }
     const old=id?S.pcs.find(x=>x.id===id):null;
-    const body=Object.assign({},old?stripId(old):{history:[]},{name,status:val("pcSt")||"대기",project:val("pcProj"),place:val("pcPlace"),model:val("pcModel"),mfgNo:val("pcMfg"),serial:val("pcSerial"),mac:val("pcMac"),ip:val("pcIp"),inDate:val("pcIn"),note:val("pcNote"),updated:today()});
+    const body=Object.assign({},old?stripId(old):{history:[]},{name,status:val("pcSt")||"대기",project:projVal("pcProj"),place:val("pcPlace"),model:val("pcModel"),mfgNo:val("pcMfg"),serial:val("pcSerial"),mac:val("pcMac"),ip:val("pcIp"),inDate:val("pcIn"),note:val("pcNote"),updated:today()});
     if(!id){ body.personId=val("pcPid")||null; if(body.personId) body.history=[{date:today(),from:"",to:pname(body.personId),status:body.status,memo:"처음 등록",by:pname(S.myPid)||""}]; }
     const nid=id||uidGen();
     if(await write(db=>db.doc("pcs/"+nid).set(body),id?"고쳤어요":"PC를 등록했어요")) closeModal();
@@ -661,36 +797,135 @@ const App={
   async _delPc(id){ if(await write(db=>db.doc("pcs/"+id).delete(),"지웠어요")) closeModal(); },
 
   /* 좌석 */
+  seatViewSet(v){ S.seatView=v; render(); },
+  seatFloorSet(f){ S.seatFloor=f; render(); },
   seatDetail(id){
     const s=S.seats.find(x=>x.id===id); if(!s) return;
-    openModal(`<h3>🪑 ${h(s.zone||"")} ${h(s.num)}번 자리</h3><p class="hint">지금: <b>${h(pname(s.personId)||"빈자리")}</b></p>
+    openModal(`<h3>🪑 ${h(seatLabel(s))} 자리</h3><p class="hint">지금: <b>${h(pname(s.personId)||"빈자리")}</b></p>
       <div class="f"><label>이 자리에 앉을 사람</label><select id="stPid">${personOptions(s.personId,"(빈자리로 두기)")}</select></div>
-      <div class="f"><label>메모 <em>(선택)</em></label><input id="stNote" value="${h(s.note||"")}" placeholder="예) 모니터 2대"></div>
-      <p class="muted" style="font-size:14px">이 사람이 다른 자리에 있었다면 그 자리는 자동으로 비워져요.</p>
+      <div class="row"><div class="f" style="flex:1;min-width:90px"><label>층</label><input id="stFloor" type="number" inputmode="numeric" value="${h(seatFloor(s))}" placeholder="예) 7"></div><div class="f" style="flex:1;min-width:90px"><label>좌석번호</label><input id="stNum" type="number" inputmode="numeric" value="${h(s.num)}"></div></div>
+      <div class="f"><label>존</label>${optButtons("stZone",ZONES,seatZone(s))}</div>
+      <div class="f"><label>메모 <em>(선택)</em></label><input id="stNote" value="${h(s.note||"")}" placeholder="예) 모니터 2대, 창가"></div>
+      <p class="muted" style="font-size:13px">이 사람이 다른 자리에 있었다면 그 자리는 자동으로 비워져요.</p>
       <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._saveSeat('${h(id)}')">저장</button></div>
-      ${isAdmin()?`<div class="actions" style="margin-top:8px"><button class="btn danger" onclick="App._delSeat('${h(id)}')">이 자리 없애기</button></div>`:""}`);
+      <div class="actions" style="margin-top:8px"><button class="btn danger" onclick="App._delSeatAsk('${h(id)}')">이 자리 없애기</button></div>`);
   },
   async _saveSeat(id){
     const s=S.seats.find(x=>x.id===id); const pid=val("stPid")||null;
+    const floor=val("stFloor"), zone=val("stZone"), num=parseInt(val("stNum"),10);
+    if(!floor){ toast("층을 넣어 주세요"); return; }
+    if(!zone){ toast("존을 골라 주세요"); return; }
+    if(!(num>0)){ toast("좌석번호를 넣어 주세요"); return; }
+    const dup=S.seats.find(x=>x.id!==id&&seatFloor(x)===floor&&seatZone(x)===zone&&String(x.num)===String(num));
+    if(dup){ toast(`${floor}층 ${zone}존 ${num}번은 이미 있어요`); return; }
     const ok=await write(async db=>{
       if(pid){ for(const o of S.seats.filter(x=>x.personId===pid&&x.id!==id)){ await db.doc("seats/"+o.id).set(Object.assign({},stripId(o),{personId:null})); } }
-      await db.doc("seats/"+id).set(Object.assign({},stripId(s),{personId:pid,note:val("stNote"),updated:today()}));
-    },pid?`${pname(pid)}님 자리로 정했어요`:"빈자리로 바꿨어요");
+      await db.doc("seats/"+id).set(Object.assign({},stripId(s),{floor,zone,num,personId:pid,note:val("stNote"),updated:today()}));
+    },pid?`${pname(pid)}님 자리로 정했어요`:"저장했어요");
     if(ok) closeModal();
   },
+  _delSeatAsk(id){ if(!isAdmin()){ needAdmin(); return; } const s=S.seats.find(x=>x.id===id); openModal(`<h3>이 자리를 없앨까요?</h3><p class="hint">${h(seatLabel(s))} 자리가 배치도에서 사라져요.</p><div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn danger" onclick="App._delSeat('${h(id)}')">없애기</button></div>`); },
   async _delSeat(id){ if(await write(db=>db.doc("seats/"+id).delete(),"자리를 없앴어요")) closeModal(); },
   addSeats(){
-    openModal(`<h3>＋ 좌석 만들기</h3><p class="hint">구역 이름과 번호 범위를 쓰면 한 번에 만들어져요. 예) ‘7층 A구역’, 1번 ~ 12번</p>
-      <div class="f"><label>구역 이름</label><input id="szZone" placeholder="예) 7층 A구역"></div>
-      <div class="row"><div class="f" style="flex:1"><label>시작 번호</label><input type="number" id="szFrom" value="1" min="1"></div><div class="f" style="flex:1"><label>끝 번호</label><input type="number" id="szTo" value="10" min="1"></div></div>
-      <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._mkSeats()">만들기</button></div>`);
+    const fl=S.seatFloor&&S.seatFloor!=="기타"?S.seatFloor:"";
+    openModal(`<h3>＋ 좌석 입력</h3><p class="hint">층, 존, 좌석번호를 넣어 주세요. 번호를 ‘1~10’처럼 범위로 넣으면 한 번에 여러 자리가 만들어져요.</p>
+      <div class="f"><label>층</label><input id="szFloor" type="number" inputmode="numeric" value="${h(fl)}" placeholder="예) 7"></div>
+      <div class="f"><label>존</label>${optButtons("szZone",ZONES,"A")}</div>
+      <div class="row"><div class="f" style="flex:1"><label>좌석번호 (시작)</label><input type="number" inputmode="numeric" id="szFrom" value="1" min="1"></div><div class="f" style="flex:1"><label>끝 <em>(한 자리면 비워 두기)</em></label><input type="number" inputmode="numeric" id="szTo" placeholder="예) 10" min="1"></div></div>
+      <div class="f"><label>앉을 사람 <em>(한 자리만 넣을 때, 선택)</em></label><select id="szPid">${personOptions("","(빈자리로 두기)")}</select></div>
+      <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._mkSeats()">저장</button></div>`);
   },
   async _mkSeats(){
-    const z=val("szZone"), a=parseInt(val("szFrom"),10), b=parseInt(val("szTo"),10);
-    if(!z){ toast("구역 이름을 써 주세요"); return; }
-    if(!(a>0&&b>=a&&b-a<200)){ toast("번호 범위를 확인해 주세요 (최대 200석)"); return; }
-    const exist=new Set(S.seats.filter(s=>s.zone===z).map(s=>String(s.num)));
-    const ok=await write(async db=>{ for(let n=a;n<=b;n++){ if(exist.has(String(n))) continue; await db.doc("seats/"+uidGen()).set({zone:z,num:n,personId:null,note:""}); } },`좌석을 만들었어요`);
+    const floor=val("szFloor"), zone=val("szZone"), a=parseInt(val("szFrom"),10), bRaw=val("szTo"), b=bRaw?parseInt(bRaw,10):a, pid=val("szPid")||null;
+    if(!floor){ toast("층을 넣어 주세요"); return; }
+    if(!zone){ toast("존을 골라 주세요"); return; }
+    if(!(a>0&&b>=a&&b-a<200)){ toast("좌석번호를 확인해 주세요 (한 번에 최대 200석)"); return; }
+    const exist=new Set(S.seats.filter(s=>seatFloor(s)===floor&&seatZone(s)===zone).map(s=>String(s.num)));
+    let made=0;
+    const ok=await write(async db=>{
+      if(pid&&a===b){ for(const o of S.seats.filter(x=>x.personId===pid)) await db.doc("seats/"+o.id).set(Object.assign({},stripId(o),{personId:null})); }
+      for(let n=a;n<=b;n++){ if(exist.has(String(n))) continue; made++; await db.doc("seats/"+uidGen()).set({floor,zone,num:n,personId:(pid&&a===b)?pid:null,note:"",updated:today()}); }
+    },null);
+    if(ok){ closeModal(); S.seatFloor=floor; render(); toast(made?`${floor}층 ${zone}존에 ${made}자리를 만들었어요`:"이미 있는 자리예요"); }
+  },
+
+  /* 사진 */
+  photoPick(kind,id){ const i=$("phInput"); if(i) i.click(); },
+  async photoUpload(kind,id,input){
+    const f=input.files&&input.files[0]; if(!f) return;
+    if(S.saving){ toast("저장하는 중이에요. 잠시 후 다시 해 주세요."); return; }
+    toast("사진을 올리는 중이에요…");
+    try{
+      const url=await shrinkImage(f,1600);
+      const rec=recOf(kind,id); if(!rec) return;
+      const j=await api({action:"photoAdd",data:url.split(",")[1],name:`${kind}_${rec.name||id}_${today()}`});
+      S.photoCache[j.fileId]=url;
+      const photos=(rec.photos||[]).concat([{id:j.fileId,date:today(),by:pname(S.myPid)||""}]);
+      const ok=await write(db=>db.doc((kind==="pc"?"pcs/":"people/")+id).set(Object.assign({},stripId(rec),{photos,updated:today()})),"사진을 저장했어요");
+      if(ok) (kind==="pc"?App.pcDetail:App.personDetail)(id);
+    }catch(e){ console.warn(e); toast(e&&e.code==="bad"?"사진을 저장하지 못했어요. 서버 코드가 최신인지 확인해 주세요.":"사진을 올리지 못했어요. 다시 해 주세요."); }
+  },
+  async photoView(kind,id,fid){
+    const rec=recOf(kind,id), p=((rec&&rec.photos)||[]).find(x=>x.id===fid)||{};
+    openModal(`<h3>📷 ${h(rec?rec.name:"")} 사진</h3><p class="hint">${fmtDate(p.date)}${p.by?" · 올린 사람: "+h(p.by):""}</p><div id="phBig" class="muted">불러오는 중…</div>
+      <div class="actions"><button class="btn ghost" onclick="App.${kind==="pc"?"pcDetail":"personDetail"}('${h(id)}')">← 돌아가기</button><button class="btn danger" onclick="App._photoDel('${kind}','${h(id)}','${h(fid)}')">사진 삭제</button></div>`);
+    try{ const d=await photoData(fid); const b=$("phBig"); if(b) b.innerHTML=`<a href="${d}" target="_blank" rel="noopener"><img class="phbig" src="${d}" alt="사진"></a>`; }catch(e){ const b=$("phBig"); if(b) b.textContent="사진을 불러오지 못했어요."; }
+  },
+  async _photoDel(kind,id,fid){
+    const rec=recOf(kind,id); if(!rec) return;
+    try{ await api({action:"photoDel",fileId:fid}); }catch(e){}
+    const photos=(rec.photos||[]).filter(x=>x.id!==fid); delete S.photoCache[fid];
+    if(await write(db=>db.doc((kind==="pc"?"pcs/":"people/")+id).set(Object.assign({},stripId(rec),{photos,updated:today()})),"사진을 지웠어요")) (kind==="pc"?App.pcDetail:App.personDetail)(id);
+  },
+
+  /* 과제 */
+  projSel(id){ const e=$(id), n=$(id+"New"); if(!e||!n) return; n.style.display=e.value==="__new"?"block":"none"; if(e.value==="__new") n.focus(); if(id==="pjName") App._pjFill(); },
+  editProject(name){
+    App._pj={orig:name||""};
+    const pj=name?(projByName(name)||{name}):{};
+    const members=new Set(name?S.people.filter(p=>(p.project||"").trim()===name).map(p=>p.id):[]);
+    openModal(`<h3>${name?"✏️ 과제 정보":"＋ 과제 추가"}</h3><p class="hint">과제명은 목록에서 고르거나 새로 입력할 수 있어요. 참여 인원을 체크하면 그 사람의 과제도 함께 바뀌어요.</p>
+      <div class="f"><label>과제명</label>${projSelect("pjName",name||"","(과제명 선택)")}</div>
+      <div class="f"><label>고객사 <em>(선택)</em></label><input id="pjClient" value="${h(pj.client||"")}" placeholder="예) 삼성전자 S.LSI"></div>
+      <div class="f"><label>근무 장소</label>${optButtons("pjPlace",["테라타워","외부"],pj.place||"테라타워")}</div>
+      <div class="row"><div class="f" style="flex:1;min-width:140px"><label>시작일</label><input type="date" id="pjStart" value="${h(pj.start||"")}"></div><div class="f" style="flex:1;min-width:140px"><label>종료일</label><input type="date" id="pjEnd" value="${h(pj.end||"")}"></div></div>
+      <div class="f"><label>참여 인원 <em>(${S.people.length}명 중 선택)</em></label><div id="pjPeople">${S.people.slice().sort(byName).map(p=>`<label class="pchk"><input type="checkbox" value="${h(p.id)}" ${members.has(p.id)?"checked":""}><span style="flex:1"><b>${h(p.name)}</b> <small>${p.project&&p.project!==name?"· 지금: "+h(p.project):""}</small></span></label>`).join("")||`<p class="muted">등록된 사람이 없어요.</p>`}</div></div>
+      <div class="f"><label>메모 <em>(선택)</em></label><textarea id="pjNote">${h(pj.note||"")}</textarea></div>
+      <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._saveProject()">저장</button></div>
+      ${name?`<div class="actions" style="margin-top:8px"><button class="btn danger" onclick="App._delProjectAsk()">과제 삭제</button></div>`:""}`);
+  },
+  _pjFill(){ /* 과제 추가에서 이미 있는 과제를 고르면 그 과제 정보를 불러와요 */
+    const n=val("pjName"); if(!n||n==="__new"||n===App._pj.orig) return;
+    App.editProject(n);
+  },
+  async _saveProject(){
+    const name=projVal("pjName"); if(!name){ toast("과제명을 고르거나 입력해 주세요"); return; }
+    const orig=App._pj.orig, old=projByName(orig||name);
+    const checked=new Set([...document.querySelectorAll("#pjPeople input:checked")].map(x=>x.value));
+    const body=Object.assign({},old?stripId(old):{},{name,client:val("pjClient"),place:val("pjPlace"),start:val("pjStart"),end:val("pjEnd"),note:val("pjNote"),updated:today()});
+    const pid=old?old.id:uidGen();
+    const ok=await write(async db=>{
+      await db.doc("projects/"+pid).set(body);
+      for(const p of S.people){
+        const cur=(p.project||"").trim(), want=checked.has(p.id);
+        if(want&&cur!==name) await db.doc("people/"+p.id).set(Object.assign({},stripId(p),{project:name,updated:today()}));
+        else if(!want&&(cur===name||(orig&&cur===orig))) await db.doc("people/"+p.id).set(Object.assign({},stripId(p),{project:"",updated:today()}));
+      }
+      if(orig&&orig!==name) for(const x of S.pcs.filter(x=>(x.project||"").trim()===orig)) await db.doc("pcs/"+x.id).set(Object.assign({},stripId(x),{project:name}));
+    },orig?"과제를 저장했어요":"과제를 추가했어요");
+    if(ok) closeModal();
+  },
+  _delProjectAsk(){
+    if(!isAdmin()){ needAdmin(); return; }
+    const n=App._pj.orig;
+    openModal(`<h3>과제를 삭제할까요?</h3><p class="hint">‘${h(n)}’ 과제가 지워지고, 참여 인원은 ‘과제 배정 안 됨’으로 바뀌어요. 사람 정보는 그대로 남아요.</p><div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn danger" onclick="App._delProject()">삭제</button></div>`);
+  },
+  async _delProject(){
+    const n=App._pj.orig, pj=projByName(n);
+    const ok=await write(async db=>{
+      if(pj) await db.doc("projects/"+pj.id).delete();
+      for(const p of S.people.filter(p=>(p.project||"").trim()===n)) await db.doc("people/"+p.id).set(Object.assign({},stripId(p),{project:"",updated:today()}));
+    },"과제를 삭제했어요");
     if(ok) closeModal();
   },
 
@@ -707,7 +942,7 @@ const App={
         <dt>과제</dt><dd>${h(p.project||"-")}</dd>
         <dt>계약 기간</dt><dd>${fmtDate(p.contractStart)} ~ ${fmtDate(p.contractEnd)} ${p.contractEnd?`<span class="badge ${n!=null&&n<0?"b-red":n!=null&&n<=30?"b-orange":"b-gray"}">${ddayText(n)}</span>`:""}</dd>
         <dt>PC</dt><dd>${pcs.length?pcs.map(x=>h(x.name)).join(", "):"-"}</dd>
-        <dt>좌석</dt><dd>${seat?h((seat.zone||"")+" "+seat.num+"번"):"-"}</dd>
+        <dt>좌석</dt><dd>${seat?h(seatLabel(seat)):"-"}</dd>
         <dt>입주가이드</dt><dd>${all?`${fin} / ${all} 완료`:"-"}</dd>
         <dt>영문 이름</dt><dd>${h(p.nameEn||"-")}</dd>
         <dt>직급</dt><dd>${h(p.rank||"-")}</dd>
@@ -718,8 +953,10 @@ const App={
         <dt>VWP/TOSS ID</dt><dd>${h(p.vwpId||"-")}</dd>
         <dt>메모</dt><dd style="white-space:pre-wrap">${h(p.note||"-")}</dd>
       </dl>
+      ${photoSection("person",id,p.photos)}
       <div class="actions"><button class="btn" onclick="App.editPerson('${h(id)}')">✏️ 정보 고치기</button><button class="btn danger" onclick="App.delPerson('${h(id)}')">삭제</button></div>
       <div class="actions" style="margin-top:8px"><button class="btn ghost" onclick="App.close()">닫기</button></div>`);
+    loadThumbs();
   },
   editPerson(id){
     const p=id?person(id):{status:"테라타워 근무"}; if(!p) return;
@@ -727,7 +964,7 @@ const App={
       <div class="f"><label>이름</label><input id="ppName" value="${h(p.name||"")}" placeholder="예) 홍길동"></div>
       <div class="row"><div class="f" style="flex:1;min-width:140px"><label>영문 이름 <em>(선택)</em></label><input id="ppEn" value="${h(p.nameEn||"")}" placeholder="예) Gildong Hong"></div><div class="f" style="flex:1;min-width:120px"><label>직급 <em>(선택)</em></label><input id="ppRank" value="${h(p.rank||"")}" placeholder="예) 책임"></div></div>
       <div class="f"><label>지금 어디서 일하나요?</label>${optButtons("ppSt",Object.keys(P_ST),p.status)}</div>
-      <div class="f"><label>과제 <em>(선택)</em></label><input id="ppProj" value="${h(p.project||"")}" placeholder="예) A사 PLL 과제"></div>
+      <div class="f"><label>과제 <em>(선택)</em></label>${projSelect("ppProj",p.project)}</div>
       <div class="row"><div class="f" style="flex:1;min-width:140px"><label>계약 시작</label><input type="date" id="ppS" value="${h(p.contractStart||"")}"></div><div class="f" style="flex:1;min-width:140px"><label>계약 종료</label><input type="date" id="ppE" value="${h(p.contractEnd||"")}"></div></div>
       <div class="f"><label>연락처 <em>(선택)</em></label><input id="ppC" value="${h(p.contact||"")}" placeholder="예) 010-0000-0000" inputmode="tel"></div>
       <div class="f"><label>개인 이메일 <em>(선택)</em></label><input id="ppMail" value="${h(p.email||"")}" placeholder="예) name@nanodesign.co.kr" inputmode="email"></div>
@@ -739,7 +976,7 @@ const App={
   async _savePerson(id){
     const name=val("ppName"); if(!name){ toast("이름을 써 주세요"); return; }
     const old=id?person(id):null, st=val("ppSt")||"테라타워 근무";
-    const body=Object.assign({},old?stripId(old):{},{name,status:st,project:val("ppProj"),contractStart:val("ppS"),contractEnd:val("ppE"),contact:val("ppC"),nameEn:val("ppEn"),rank:val("ppRank"),email:val("ppMail"),knox:val("ppKnox"),ssoId:val("ppSso"),vwpId:val("ppVwp"),note:val("ppNote"),updated:today()});
+    const body=Object.assign({},old?stripId(old):{},{name,status:st,project:projVal("ppProj"),contractStart:val("ppS"),contractEnd:val("ppE"),contact:val("ppC"),nameEn:val("ppEn"),rank:val("ppRank"),email:val("ppMail"),knox:val("ppKnox"),ssoId:val("ppSso"),vwpId:val("ppVwp"),note:val("ppNote"),updated:today()});
     const nid=id||uidGen();
     if(await write(db=>db.doc("people/"+nid).set(body),id?"고쳤어요":"추가했어요")){
       closeModal();
@@ -794,9 +1031,10 @@ const App={
     const add=(name,rows)=>{ const ws=X.utils.json_to_sheet(rows.length?rows:[{"(비어 있음)":""}]); X.utils.book_append_sheet(wb,ws,name); };
     add("사람",S.people.slice().sort(byName).map(p=>({"이름":p.name,"영문 이름":p.nameEn||"","직급":p.rank||"","상태":p.status,"과제":p.project||"","계약시작":p.contractStart||"","계약종료":p.contractEnd||"","연락처":p.contact||"","개인 이메일":p.email||"","Knox 메일":p.knox||"","RBS/SSO ID":p.ssoId||"","VWP/TOSS ID":p.vwpId||"","메모":p.note||""})));
     add("PC",S.pcs.slice().sort((a,b)=>natural(a.name||"",b.name||"")).map(p=>({"PC이름":p.name,"상태":p.status,"사용자":pname(p.personId),"과제":p.project||"","위치":p.place||"","모델명":p.model||"","제조번호":p.mfgNo||"","시리얼넘버":p.serial||"","MAC 주소":p.mac||"","IP 주소":p.ip||"","반입일":p.inDate||"","메모":p.note||""})));
+    add("과제",projectNames().map(n=>{ const pj=projByName(n)||{}; return {"과제":n,"고객사":pj.client||"","장소":pj.place||"","시작":pj.start||"","종료":pj.end||"","참여 인원":S.people.filter(p=>(p.project||"").trim()===n).map(p=>p.name).join(", "),"메모":pj.note||""}; }));
     const hist=[]; S.pcs.forEach(p=>(p.history||[]).forEach(x=>hist.push({"PC이름":p.name,"날짜":x.date,"이전 사용자":x.from,"새 사용자":x.to,"상태":x.status||"","메모":x.memo||"","기록한 사람":x.by||""})));
     hist.sort((a,b)=>(a["날짜"]||"").localeCompare(b["날짜"]||"")); add("PC변경기록",hist);
-    add("좌석",S.seats.slice().sort((a,b)=>natural((a.zone||"")+a.num,(b.zone||"")+b.num)).map(s=>({"구역":s.zone,"번호":s.num,"사용자":pname(s.personId),"메모":s.note||""})));
+    add("좌석",S.seats.slice().sort((a,b)=>natural(seatFloor(a)+seatZone(a)+String(a.num).padStart(4,"0"),seatFloor(b)+seatZone(b)+String(b.num).padStart(4,"0"))).map(s=>({"층":seatFloor(s),"존":seatZone(s),"번호":s.num,"사용자":pname(s.personId),"메모":s.note||""})));
     const g=[]; gSections().forEach((s,i)=>(s.steps||[]).forEach((st,k)=>g.push({"단계":`${i+1}. ${s.title}`,"순서":k+1,"할 일":st.title,"설명":st.desc||"","담당·문의":st.who||""}))); add("입주가이드",g);
     try{ X.writeFile(wb,`나노디자인_백업_${today()}.xlsx`); toast("엑셀 파일을 받았어요"); }
     catch(e){ toast("파일을 받지 못했어요"); }
@@ -817,6 +1055,34 @@ const App={
   document.addEventListener("contextmenu",e=>{ if(e.target.closest("[data-lp]")) e.preventDefault(); });
 })();
 function needAdmin(){ openModal(`<h3>🔒 관리자만 지울 수 있어요</h3><p class="hint">잘못 지우는 걸 막기 위해 삭제는 관리자만 할 수 있어요. 오른쪽 위 ⚙️ ‘관리’에서 관리자 비밀번호를 넣고 관리자 모드를 켠 다음 다시 눌러 주세요.</p><div class="actions"><button class="btn ghost" onclick="App.close()">닫기</button><button class="btn" onclick="App.go('#manage')">관리자 모드 켜러 가기</button></div>`); }
+/* ---------- 사진 (구글 드라이브에 저장, 팀 비밀번호로만 볼 수 있어요) ---------- */
+function photoSection(kind,id,photos){
+  photos=photos||[];
+  return `<b>📷 사진 ${photos.length?`(${photos.length})`:""}</b><div class="phs">${photos.map(p=>`<button type="button" class="ph" onclick="App.photoView('${kind}','${h(id)}','${h(p.id)}')"><img data-fid="${h(p.id)}" alt="사진"></button>`).join("")}<button type="button" class="ph add" onclick="App.photoPick('${kind}','${h(id)}')">＋ 사진<br>찍기·추가</button></div><input type="file" accept="image/*" id="phInput" style="display:none" onchange="App.photoUpload('${kind}','${h(id)}',this)">`;
+}
+async function photoData(fid){
+  if(S.photoCache[fid]) return S.photoCache[fid];
+  const j=await api({action:"photoGet",fileId:fid});
+  return (S.photoCache[fid]=`data:${j.mime||"image/jpeg"};base64,${j.data}`);
+}
+function loadThumbs(){
+  document.querySelectorAll("#modal img[data-fid]").forEach(async img=>{
+    try{ img.src=await photoData(img.dataset.fid); }catch(e){ img.replaceWith(Object.assign(document.createElement("span"),{textContent:"불러오기 실패"})); }
+  });
+}
+function shrinkImage(file,max){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{ const im=new Image(); im.onload=()=>{
+      const r=Math.min(1,max/Math.max(im.width,im.height)), c=document.createElement("canvas");
+      c.width=Math.round(im.width*r); c.height=Math.round(im.height*r);
+      c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+      res(c.toDataURL("image/jpeg",0.8));
+    }; im.onerror=rej; im.src=fr.result; };
+    fr.onerror=rej; fr.readAsDataURL(file);
+  });
+}
+const recOf=(kind,id)=>kind==="pc"?S.pcs.find(x=>x.id===id):person(id);
 function stripId(o){ const c=Object.assign({},o); delete c.id; return c; }
 function focusSearch(){ const el=document.querySelector(".search"); if(el){ el.focus(); const v=el.value; el.setSelectionRange(v.length,v.length); } }
 window.App=App;
