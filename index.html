@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f3f5f9" id="themeColor">
-<script>try{var t=localStorage.getItem("nd_theme");if(t==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
+<script>try{var t=localStorage.getItem("nd_theme");if(t==="dark"||t==="dimgray")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="나노디자인">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,6 +27,17 @@
   --seat-used-b:#bcd0fb; --seat-used-c:#1e3a8a; --seat-free-b:#cfe9d7;
   --r:16px; color-scheme:light;
 }
+:root[data-theme="dimgray"]{
+  --bg:#26282c; --card:#33363b; --card2:#3a3d43; --ink:#ecedef; --sub:#b3b7be; --line:#45494f; --line2:#5a5f67; --hdr:rgba(38,40,44,.94);
+  --pri:#7fa6ff; --pri-soft:#36425c;
+  --green:#5ee08f; --green-soft:#2c4636;
+  --orange:#ffa564; --orange-soft:#4a3a2c;
+  --gray:#b3b7be; --gray-soft:#3e4248;
+  --red:#ff8a8a; --red-soft:#4c3133;
+  --purple:#c2a8ff; --purple-soft:#413a55;
+  --seat-used-b:#5772ad; --seat-used-c:#d6e2ff; --seat-free-b:#3f6f50;
+  color-scheme:dark;
+}
 :root[data-theme="dark"]{
   --bg:#0e131c; --card:#171e2b; --card2:#1d2535; --ink:#e6ebf4; --sub:#97a3b6; --line:#2a3446; --line2:#3a465c; --hdr:rgba(14,19,28,.94);
   --pri:#6b9bff; --pri-soft:#1c2a47;
@@ -44,16 +55,19 @@ button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 .wrap{max-width:860px;margin:0 auto;padding:0 16px 100px}
 header.top{position:sticky;top:0;z-index:20;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-header.top .in{max-width:860px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:10px}
+header.top .in{max-width:860px;margin:0 auto;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative;min-height:56px}
 .logo{width:38px;height:38px;border-radius:11px;background:var(--pri);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
-.brand{display:flex;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;flex:none}
+.brand{display:flex;align-items:center;justify-self:start;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;flex:none}
 .brand img{display:block;height:26px;width:auto}
-.ttl{font-weight:800;font-size:16px;line-height:1.2}
+.ttl{font-weight:800;font-size:16px;line-height:1.2;text-align:center;white-space:nowrap;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
 .ttl small{display:block;font-weight:500;font-size:11px;color:var(--sub)}
-.who{margin-left:auto;font-size:13px;color:var(--sub);text-align:right}
+.who{justify-self:end;font-size:13px;color:var(--sub);text-align:right}
 .who b{color:var(--ink)}
-.who{white-space:nowrap;display:flex;align-items:center;gap:8px}
-.gear{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;text-decoration:none;font-size:18px;flex:none}
+.who{white-space:nowrap;display:flex;align-items:center;gap:6px}
+.themesel{height:36px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:12px;font-weight:700;padding:0 2px;max-width:76px;width:76px}
+@media(max-width:350px){.ttl{font-size:14px}.themesel{max-width:66px;width:66px;font-size:11px}}
+@media(max-width:480px){.whoname{display:none}}
+.gear{width:34px;height:34px;border-radius:11px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;text-decoration:none;font-size:18px;flex:none}
 .gear.on{border-color:var(--pri);background:var(--pri-soft)}
 .whoname{text-align:right}
 .grp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
@@ -63,7 +77,7 @@ header.top .in{max-width:860px;margin:0 auto;padding:12px 16px;display:flex;alig
 .grp .item:last-child{border-bottom:0}
 [data-lp]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 [data-lp].pressing{background:var(--pri-soft)}
-@media(max-width:480px){.ttl small{display:none}}
+@media(max-width:480px){.ttl small{display:none}.brand img{height:22px}}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
 nav.tabs .in{max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
 nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 9px;text-decoration:none;color:var(--sub);font-size:11px;font-weight:700;white-space:nowrap;word-break:keep-all;letter-spacing:-.4px;min-width:0;overflow:hidden}
@@ -200,6 +214,16 @@ a.lnk{display:inline-flex;align-items:center;gap:4px;color:var(--pri);font-weigh
 .ms.free{border-color:var(--seat-free-b);border-style:dashed;color:var(--green);background:var(--card)}
 .ms.used{border-color:var(--seat-used-b);background:var(--pri-soft);color:var(--seat-used-c)}
 .ms.mine{outline:3px solid var(--orange);outline-offset:1px}
+.zbox.zov{display:block;text-align:left;min-height:84px;cursor:pointer;color:var(--ink)}
+.zbox.zov.sel{border-color:var(--pri);background:var(--pri-soft)}
+.zstat{font-size:13px;color:var(--sub)}.zstat b{font-size:20px;color:var(--ink)}
+.zbar{height:6px;border-radius:9px;background:var(--gray-soft);overflow:hidden;margin-top:6px}.zbar i{display:block;height:100%;background:var(--pri)}
+.zdet{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-top:12px}
+.zdet h3{margin:0 0 8px;font-size:14px}
+.srow{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px}
+.rlab{flex:none;width:22px;height:46px;display:grid;place-items:center;font-weight:800;color:var(--sub);background:var(--gray-soft);border-radius:8px;font-size:12px}
+.rstrip{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.rstrip .ms{flex:none;width:48px}
 .door{grid-column:1/-1;text-align:center;font-size:11px;color:var(--sub);border-top:2px dashed var(--line2);padding-top:4px}
 /* photos */
 .phs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin:8px 0}
@@ -216,7 +240,7 @@ a.lnk{display:inline-flex;align-items:center;gap:4px;color:var(--pri);font-weigh
 <body>
 <header class="top"><div class="in">
   <a href="#home" class="brand" aria-label="나노디자인 홈"><img src="logo-nano.png" alt="NANO"></a>
-  <div class="ttl">나노디자인<small>테라타워 입주가이드 · PC · 좌석 · 인원</small></div>
+  <div class="ttl">나노디자인<small>테라타워 관리</small></div>
   <div class="who" id="who"></div>
 </div><div id="robar"></div></header>
 
@@ -251,14 +275,14 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.11-1";
+const APP_VER="2026.11.12-1";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
   connected:false, slow:false, err:null,
   pcs:[], people:[], seats:[], projects:[], guide:null, progress:{}, myPid:null,
   pcFilter:"전체", pcQ:"", pQ:"", pFilter:"전체", guideEdit:false,
-  openSecs:null, seatView:"map", seatFloor:null, photoCache:{},
+  openSecs:null, seatView:"map", seatFloor:null, seatZone:"", photoCache:{},
   writeSeq:0, lastSig:"", progDirty:false, progTimer:null
 };
 const LS_KEY="nd_me_pid", LS_PW="nd_pw", LS_ADMIN="nd_admin", LS_API="nd_api", LS_THEME="nd_theme";
@@ -285,7 +309,12 @@ const natural=(a,b)=>String(a).localeCompare(String(b),"ko",{numeric:true});
 const ZONES=["A","B","C","D"];
 function seatFloor(s){ if(s.floor) return String(s.floor); const m=String(s.zone||"").match(/(\d+)\s*층/); return m?m[1]:""; }
 function seatZone(s){ if(s.floor) return s.zone||""; const m=String(s.zone||"").match(/([A-Da-d])\s*(존|구역|zone)?/); return m?m[1].toUpperCase():""; }
-function seatLabel(s){ if(!s) return ""; const f=seatFloor(s), z=seatZone(s); return (f||z)?`${f?f+"층 ":""}${z?z+"존 ":""}${s.num}번`:`${s.zone||""} ${s.num}번`.trim(); }
+const ROWS="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+function seatCode(s){ return s.row?`${s.row}${String(s.num).padStart(2,"0")}`:`${s.num}번`; }
+function seatLabel(s){ if(!s) return ""; const f=seatFloor(s), z=seatZone(s); return (f||z)?`${f?f+"층 ":""}${z?z+"존 ":""}${seatCode(s)}`:`${s.zone||""} ${seatCode(s)}`.trim(); }
+const seatSortKey=s=>(s.row||"")+String(s.num).padStart(3,"0");
+function numOptions(sel,from){ let o=""; for(let i=from||1;i<=16;i++) o+=`<option value="${i}" ${String(i)===String(sel)?"selected":""}>${String(i).padStart(2,"0")}</option>`; return o; }
+function rowOptions(sel){ return ROWS.map(r=>`<option value="${r}" ${r===sel?"selected":""}>${r}열</option>`).join(""); }
 function projectNames(){ const set=new Set(); S.projects.forEach(p=>p.name&&set.add(p.name.trim())); S.people.forEach(p=>p.project&&set.add(p.project.trim())); S.pcs.forEach(p=>p.project&&set.add(p.project.trim())); return [...set].filter(Boolean).sort(natural); }
 const projByName=n=>S.projects.find(p=>(p.name||"").trim()===(n||"").trim());
 /* 과제명 콤보박스: 목록에서 고르거나 '새 과제명 직접 입력' */
@@ -371,8 +400,9 @@ function start(){
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") load(true); });
 }
 function applyTheme(t){
-  document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");
-  const m=$("themeColor"); if(m) m.setAttribute("content",t==="dark"?"#0e131c":"#f3f5f9");
+  t=(t==="dark"||t==="dimgray")?t:"light";
+  document.documentElement.setAttribute("data-theme",t);
+  const m=$("themeColor"); if(m) m.setAttribute("content",{dark:"#0e131c",dimgray:"#26282c",light:"#f3f5f9"}[t]);
 }
 /* 입주가이드 체크: 화면에 바로 반영하고, 서버 저장은 순서대로 한 번에 보내요 (체크가 풀리는 문제 방지) */
 function queueProgress(){
@@ -396,7 +426,8 @@ function setMe(pid){
 /* ---------- 화면 공통 ---------- */
 function renderTop(){
   const me=S.myPid&&person(S.myPid);
-  $("who").innerHTML=`<span class="whoname">${me?`<b>${h(me.name)}</b>님`:""}${isAdmin()?'<span class="tag-admin">관리자</span>':""}</span><a href="#manage" class="gear ${S.view==="manage"?"on":""}" aria-label="관리">⚙️</a>`;
+  const th=document.documentElement.getAttribute("data-theme")||"light";
+  $("who").innerHTML=`<span class="whoname">${me?`<b>${h(me.name)}</b>님`:""}${isAdmin()?'<span class="tag-admin">관리자</span>':""}</span><select class="themesel" aria-label="화면 모드" onchange="App.setTheme(this.value)"><option value="light" ${th==="light"?"selected":""}>☀️ 라이트</option><option value="dimgray" ${th==="dimgray"?"selected":""}>🌗 다크그레이</option><option value="dark" ${th==="dark"?"selected":""}>🌙 다크</option></select><a href="#manage" class="gear ${S.view==="manage"?"on":""}" aria-label="관리">⚙️</a>`;
   $("robar").innerHTML="";
   $("tabs").innerHTML=TABS.map(t=>`<a href="#${t.id}" class="${S.view===t.id?"on":""}"><span class="ic">${t.ic}</span><span class="t">${t.t}</span></a>`).join("");
 }
@@ -429,9 +460,7 @@ function vHome(){
   const ending=S.people.filter(p=>p.status==="테라타워 근무"&&p.contractEnd&&dday(p.contractEnd)<=30).sort((a,b)=>(a.contractEnd||"").localeCompare(b.contractEnd||""));
   const leftover=S.people.filter(p=>p.status!=="테라타워 근무"&&(S.pcs.some(x=>x.personId===p.id&&x.status==="사용중")||S.seats.some(s=>s.personId===p.id)));
   const me=S.myPid&&person(S.myPid);
-  const dark=document.documentElement.getAttribute("data-theme")==="dark";
-  let o=`<div class="theme-sw" role="group" aria-label="화면 모드"><button class="${dark?"":"on"}" onclick="App.setTheme('light')">☀️ 화이트 모드</button><button class="${dark?"on":""}" onclick="App.setTheme('dark')">🌙 다크 모드</button></div>`;
-  o+=`<h1 class="page">안녕하세요${me?", "+h(me.name)+"님":""} 👋</h1><p class="lead">테라타워 현황을 한눈에 볼 수 있어요. 카드를 누르면 자세히 보여요.</p>`;
+  let o=`<h1 class="page">안녕하세요${me?", "+h(me.name)+"님":""} 👋</h1><p class="lead">테라타워 현황을 한눈에 볼 수 있어요. 카드를 누르면 자세히 보여요.</p>`;
   if(!me&&S.people.length) o+=`<div class="alert info" style="margin-bottom:14px"><span class="ic">🙋</span><div style="flex:1"><b>먼저 내 이름을 골라 주세요</b>입주가이드 진행 상황이 내 이름으로 저장돼요.<div style="margin-top:8px"><button class="btn sm" onclick="App.pickMe()">내 이름 고르기</button></div></div></div>`;
   o+=`<div class="grid g4">
     <a class="stat" href="#people"><div class="k">👥 테라타워 근무</div><div class="v">${atTT.length}<span style="font-size:17px">명</span></div><div class="s">전체 ${S.people.length}명</div></a>
@@ -449,7 +478,8 @@ function vHome(){
     <button class="btn soft big" onclick="location.hash='#pcs'">🔁 PC 사용자 바꾸기</button>
     <button class="btn soft big" onclick="location.hash='#seats'">🪑 자리 정하기</button>
     <button class="btn soft big" onclick="location.hash='#projects';setTimeout(()=>App.editProject(),50)">📁 과제 추가하기</button>
-  </div>`;
+  </div>
+  <button class="btn big" style="margin-top:12px" onclick="App.syncSheet(this)">📤 구글 시트로 보내기</button>`;
   o+=`<p class="muted" style="text-align:center;font-size:12px;margin:22px 0 0">앱 버전 ${APP_VER}</p>`;
   return o;
 }
@@ -483,7 +513,7 @@ function vGuide(){
 /* 링크: 누르면 새 창으로 바로 열려요. 사내망 주소는 회사 PC에서만 열린다고 표시해요 */
 function isInternal(u){ return /^https?:\/\/(\d+\.\d+\.\d+\.\d+|[^\/]*\.sec\.samsung\.net|[^\/]*\.samsungds\.net)/i.test(u); }
 function linkify(t){
-  return h(t).replace(/https?:\/\/[^\s<]+/g,raw=>{
+  return h(t).replace(/https?:\/\/[^\s<()\[\]]+[^\s<()\[\].,;:'"]/g,raw=>{
     const u=raw.replace(/&amp;/g,"&"), href=h(u);
     return `<span class="lnk-row"><a class="lnk" href="${href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 ${raw}</a>${isInternal(u)?`<span class="lnk-note">사내망 전용</span>`:""}<button type="button" class="copy" onclick="event.stopPropagation();App.copy('${href}')">복사</button></span>`;
   });
@@ -515,7 +545,7 @@ function pcItem(p){
 function seatFloors(){ const f=[...new Set(S.seats.map(s=>seatFloor(s)||"기타"))]; return f.sort(natural); }
 function seatTile(s,cls){
   const n=pname(s.personId), mine=s.personId&&s.personId===S.myPid;
-  return `<button class="${cls} ${n?"used":"free"} ${mine?"mine":""}" onclick="App.seatDetail('${h(s.id)}')" aria-label="${h(seatLabel(s))} ${h(n||"빈자리")}">${cls==="ms"?`<b>${h(s.num)}</b><span>${n?h(n.slice(0,3)):"빈"}</span>`:`<span class="sn">${h(s.num)}번</span><span class="sp2">${n?h(n):"빈자리"}</span>`}</button>`;
+  return `<button class="${cls} ${n?"used":"free"} ${mine?"mine":""}" onclick="App.seatDetail('${h(s.id)}')" aria-label="${h(seatLabel(s))} ${h(n||"빈자리")}">${cls==="ms"?`<b>${h(seatCode(s))}</b><span>${n?h(n.slice(0,3)):"빈"}</span>`:`<span class="sn">${h(seatCode(s))}</span><span class="sp2">${n?h(n):"빈자리"}</span>`}</button>`;
 }
 function vSeats(){
   const used=S.seats.filter(s=>s.personId).length, floors=seatFloors();
@@ -523,24 +553,33 @@ function vSeats(){
   const my=S.myPid&&S.seats.find(s=>s.personId===S.myPid);
   let o=`<h1 class="page">🪑 좌석 현황</h1><p class="lead">자리를 누르면 앉을 사람을 정하거나 비울 수 있어요. <span class="badge b-green">빈자리</span> <span class="badge b-blue">사용 중</span>${my?` <span class="badge b-orange">내 자리: ${h(seatLabel(my))}</span>`:""}</p>`;
   o+=`<div class="card" style="margin-bottom:12px"><div class="row"><b>사용 중 ${used}석 · 빈자리 ${S.seats.length-used}석</b><span class="sp"></span><button class="btn sm" onclick="App.addSeats()">＋ 좌석 입력</button></div></div>`;
-  if(!S.seats.length) return o+`<div class="empty"><div class="ic">🪑</div><b>등록된 좌석이 없어요.</b><br>‘＋ 좌석 입력’에서 층, 존(A~D), 좌석번호를 넣으면 배치도가 만들어져요.</div>`;
+  if(!S.seats.length) return o+`<div class="empty"><div class="ic">🪑</div><b>등록된 좌석이 없어요.</b><br>‘＋ 좌석 입력’에서 층, 존(A~D), 열(A~Z), 번호(1~16)를 고르면 배치도가 만들어져요. 예) 4층 D존 I01</div>`;
   o+=`<div class="vsw"><button class="${S.seatView==="map"?"on":""}" onclick="App.seatViewSet('map')">🗺️ 배치도</button><button class="${S.seatView==="list"?"on":""}" onclick="App.seatViewSet('list')">📋 목록</button></div>`;
   if(floors.length>1||S.seatView==="map") o+=`<div class="chips">${floors.map(f=>{ const arr=S.seats.filter(s=>(seatFloor(s)||"기타")===f); return `<button class="chip ${S.seatFloor===f?"on":""}" onclick="App.seatFloorSet('${h(f)}')">${f==="기타"?"기타":h(f)+"층"} ${arr.filter(s=>s.personId).length}/${arr.length}</button>`; }).join("")}</div>`;
   if(S.seatView==="map"){
     const fl=S.seatFloor, arr=S.seats.filter(s=>(seatFloor(s)||"기타")===fl);
     const zs=ZONES.slice(); arr.forEach(s=>{ const z=seatZone(s)||"기타"; if(!zs.includes(z)) zs.push(z); });
-    o+=`<div class="fmap">`+zs.map(z=>{
-      const za=arr.filter(s=>(seatZone(s)||"기타")===z).sort((a,b)=>natural(a.num,b.num));
-      if(!za.length&&!ZONES.includes(z)) return "";
-      return `<div class="zbox ${za.length?"":"empty-z"}"><h4>${h(z)}존 <span class="muted">${za.filter(s=>s.personId).length}/${za.length}</span></h4>${za.length?`<div class="mseats">${za.map(s=>seatTile(s,"ms")).join("")}</div>`:`<div class="muted" style="font-size:12px">좌석 없음</div>`}</div>`;
-    }).join("")+`<div class="door">⬇ ${fl==="기타"?"":h(fl)+"층 "}배치도 (A·B·C·D존 위치는 실제와 다를 수 있어요)</div></div>`;
+    /* 전체 그림: 층 전체를 A·B / C·D 존으로 한눈에 */
+    o+=`<div class="fmap">`+zs.filter(z=>ZONES.includes(z)||arr.some(s=>(seatZone(s)||"기타")===z)).map(z=>{
+      const za=arr.filter(s=>(seatZone(s)||"기타")===z), u=za.filter(s=>s.personId).length, mine=za.some(s=>s.personId&&s.personId===S.myPid);
+      return `<button class="zbox zov ${za.length?"":"empty-z"} ${S.seatZone===z?"sel":""}" onclick="App.seatZoneSet('${h(z)}')"><h4>${h(z)}존 ${mine?"⭐":""}</h4><div class="zstat"><b>${u}</b> / ${za.length}석</div><div class="zbar"><i style="width:${za.length?Math.round(u/za.length*100):0}%"></i></div></button>`;
+    }).join("")+`<div class="door">${fl==="기타"?"":h(fl)+"층 "}전체 배치 · 존을 누르면 그 존만 보여요 (실제 위치와 다를 수 있어요)</div></div>`;
+    const showZ=S.seatZone&&zs.includes(S.seatZone)?[S.seatZone]:zs;
+    showZ.forEach(z=>{
+      const za=arr.filter(s=>(seatZone(s)||"기타")===z).sort((a,b)=>natural(seatSortKey(a),seatSortKey(b)));
+      if(!za.length) return;
+      const rows=[...new Set(za.map(s=>s.row||""))].sort(natural);
+      o+=`<div class="zdet"><h3>📍 ${fl==="기타"?"":h(fl)+"층 "}${h(z)}존 <span class="muted" style="font-weight:500;font-size:13px">(${za.filter(s=>s.personId).length}/${za.length})</span></h3>`+
+        rows.map(r=>`<div class="srow"><span class="rlab">${r?h(r):"-"}</span><div class="rstrip">${za.filter(s=>(s.row||"")===r).map(s=>seatTile(s,"ms")).join("")}</div></div>`).join("")+`</div>`;
+    });
+    if(S.seatZone) o+=`<button class="btn ghost" style="width:100%;margin-top:6px" onclick="App.seatZoneSet('')">모든 존 보기</button>`;
     return o;
   }
   floors.forEach(f=>{
     const fa=S.seats.filter(s=>(seatFloor(s)||"기타")===f);
     const zs=[...new Set(fa.map(s=>seatZone(s)||"기타"))].sort(natural);
     zs.forEach(z=>{
-      const arr=fa.filter(s=>(seatZone(s)||"기타")===z).sort((a,b)=>natural(a.num,b.num));
+      const arr=fa.filter(s=>(seatZone(s)||"기타")===z).sort((a,b)=>natural(seatSortKey(a),seatSortKey(b)));
       o+=`<div class="zone"><h3>📍 ${f==="기타"?"":h(f)+"층 "}${h(z)}존 <span class="muted" style="font-weight:500;font-size:13px">(${arr.filter(s=>s.personId).length}/${arr.length})</span></h3><div class="seats">${arr.map(s=>seatTile(s,"seat")).join("")}</div></div>`;
     });
   });
@@ -606,6 +645,7 @@ function vManage(){
   o+=isAdmin()?`<div class="row"><span class="badge b-purple">👑 관리자 모드 켜짐</span><span class="sp"></span><button class="btn sm ghost" onclick="App.adminOff()">끄기</button></div>`
     :`<div class="row"><input id="adPw" type="password" class="search" style="flex:1;min-width:160px" placeholder="관리자 비밀번호" onkeydown="if(event.key==='Enter')App.adminOn()"><button class="btn" onclick="App.adminOn()">켜기</button></div>`;
   o+=`</div>`;
+  o+=`<h2 class="sec">📤 구글 시트로 보내기</h2><div class="card"><p class="muted" style="margin-top:0">앱 내용을 구글 시트의 인원·과제·PC현황·좌석·입주가이드 탭으로 지금 바로 다시 정리해요. 저장할 때마다 자동으로도 정리되지만, 확실히 맞추고 싶을 때 눌러 주세요.</p><button class="btn" onclick="App.syncSheet(this)">📤 지금 보내기</button>${S.lastSync?`<p class="muted" style="margin-bottom:0;font-size:12px">마지막으로 보낸 시간: ${h(S.lastSync)}</p>`:""}</div>`;
   o+=`<h2 class="sec">💾 엑셀로 백업하기</h2><div class="card"><p class="muted" style="margin-top:0">PC·좌석·사람·가이드 내용을 엑셀 파일 하나로 내려받아요. 한 달에 한 번 정도 받아 두면 안전해요.</p><button class="btn" onclick="App.exportXlsx()">📥 엑셀 파일 받기</button></div>`;
   o+=`<p class="muted" style="text-align:center;font-size:12px;margin-top:20px">앱 버전 ${APP_VER}</p>`;
   o+=`<h2 class="sec">🚪 로그아웃</h2><div class="card"><div class="row"><div style="flex:1" class="muted">이 휴대폰에 저장된 팀 비밀번호를 지워요.</div><button class="btn sm ghost" onclick="App.logout()">로그아웃</button></div></div>`;
@@ -798,13 +838,15 @@ const App={
 
   /* 좌석 */
   seatViewSet(v){ S.seatView=v; render(); },
-  seatFloorSet(f){ S.seatFloor=f; render(); },
+  seatFloorSet(f){ S.seatFloor=f; S.seatZone=""; render(); },
+  seatZoneSet(z){ S.seatZone=(S.seatZone===z?"":z); render(); },
   seatDetail(id){
     const s=S.seats.find(x=>x.id===id); if(!s) return;
     openModal(`<h3>🪑 ${h(seatLabel(s))} 자리</h3><p class="hint">지금: <b>${h(pname(s.personId)||"빈자리")}</b></p>
       <div class="f"><label>이 자리에 앉을 사람</label><select id="stPid">${personOptions(s.personId,"(빈자리로 두기)")}</select></div>
-      <div class="row"><div class="f" style="flex:1;min-width:90px"><label>층</label><input id="stFloor" type="number" inputmode="numeric" value="${h(seatFloor(s))}" placeholder="예) 7"></div><div class="f" style="flex:1;min-width:90px"><label>좌석번호</label><input id="stNum" type="number" inputmode="numeric" value="${h(s.num)}"></div></div>
+      <div class="f"><label>층</label><input id="stFloor" type="number" inputmode="numeric" value="${h(seatFloor(s))}" placeholder="예) 4"></div>
       <div class="f"><label>존</label>${optButtons("stZone",ZONES,seatZone(s))}</div>
+      <div class="row"><div class="f" style="flex:1;min-width:110px"><label>열</label><select id="stRow">${rowOptions(s.row||"")}</select></div><div class="f" style="flex:1;min-width:110px"><label>번호</label><select id="stNum">${numOptions(s.num)}</select></div></div>
       <div class="f"><label>메모 <em>(선택)</em></label><input id="stNote" value="${h(s.note||"")}" placeholder="예) 모니터 2대, 창가"></div>
       <p class="muted" style="font-size:13px">이 사람이 다른 자리에 있었다면 그 자리는 자동으로 비워져요.</p>
       <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._saveSeat('${h(id)}')">저장</button></div>
@@ -812,15 +854,15 @@ const App={
   },
   async _saveSeat(id){
     const s=S.seats.find(x=>x.id===id); const pid=val("stPid")||null;
-    const floor=val("stFloor"), zone=val("stZone"), num=parseInt(val("stNum"),10);
+    const floor=val("stFloor"), zone=val("stZone"), row=val("stRow"), num=parseInt(val("stNum"),10);
     if(!floor){ toast("층을 넣어 주세요"); return; }
     if(!zone){ toast("존을 골라 주세요"); return; }
     if(!(num>0)){ toast("좌석번호를 넣어 주세요"); return; }
-    const dup=S.seats.find(x=>x.id!==id&&seatFloor(x)===floor&&seatZone(x)===zone&&String(x.num)===String(num));
-    if(dup){ toast(`${floor}층 ${zone}존 ${num}번은 이미 있어요`); return; }
+    const dup=S.seats.find(x=>x.id!==id&&seatFloor(x)===floor&&seatZone(x)===zone&&(x.row||"")===row&&String(x.num)===String(num));
+    if(dup){ toast(`${floor}층 ${zone}존 ${seatCode({row,num})}은 이미 있어요`); return; }
     const ok=await write(async db=>{
       if(pid){ for(const o of S.seats.filter(x=>x.personId===pid&&x.id!==id)){ await db.doc("seats/"+o.id).set(Object.assign({},stripId(o),{personId:null})); } }
-      await db.doc("seats/"+id).set(Object.assign({},stripId(s),{floor,zone,num,personId:pid,note:val("stNote"),updated:today()}));
+      await db.doc("seats/"+id).set(Object.assign({},stripId(s),{floor,zone,row,num,personId:pid,note:val("stNote"),updated:today()}));
     },pid?`${pname(pid)}님 자리로 정했어요`:"저장했어요");
     if(ok) closeModal();
   },
@@ -828,25 +870,43 @@ const App={
   async _delSeat(id){ if(await write(db=>db.doc("seats/"+id).delete(),"자리를 없앴어요")) closeModal(); },
   addSeats(){
     const fl=S.seatFloor&&S.seatFloor!=="기타"?S.seatFloor:"";
-    openModal(`<h3>＋ 좌석 입력</h3><p class="hint">층, 존, 좌석번호를 넣어 주세요. 번호를 ‘1~10’처럼 범위로 넣으면 한 번에 여러 자리가 만들어져요.</p>
-      <div class="f"><label>층</label><input id="szFloor" type="number" inputmode="numeric" value="${h(fl)}" placeholder="예) 7"></div>
-      <div class="f"><label>존</label>${optButtons("szZone",ZONES,"A")}</div>
-      <div class="row"><div class="f" style="flex:1"><label>좌석번호 (시작)</label><input type="number" inputmode="numeric" id="szFrom" value="1" min="1"></div><div class="f" style="flex:1"><label>끝 <em>(한 자리면 비워 두기)</em></label><input type="number" inputmode="numeric" id="szTo" placeholder="예) 10" min="1"></div></div>
+    openModal(`<h3>＋ 좌석 입력</h3><p class="hint">층 → 존 → 열 → 번호 순서로 골라 주세요. 예) 4층 D존 I열 01번 = <b>4층 D존 I01</b>. ‘끝 번호’를 고르면 한 줄을 한 번에 만들 수 있어요.</p>
+      <div class="f"><label>층</label><input id="szFloor" type="number" inputmode="numeric" value="${h(fl)}" placeholder="예) 4"></div>
+      <div class="f"><label>존</label>${optButtons("szZone",ZONES,S.seatZone&&ZONES.includes(S.seatZone)?S.seatZone:"A")}</div>
+      <div class="f"><label>열 (A~Z)</label><select id="szRow">${rowOptions("A")}</select></div>
+      <div class="row"><div class="f" style="flex:1;min-width:110px"><label>번호 (1~16)</label><select id="szFrom">${numOptions(1)}</select></div><div class="f" style="flex:1;min-width:110px"><label>끝 번호 <em>(여러 자리)</em></label><select id="szTo"><option value="">한 자리만</option>${numOptions("")}</select></div></div>
       <div class="f"><label>앉을 사람 <em>(한 자리만 넣을 때, 선택)</em></label><select id="szPid">${personOptions("","(빈자리로 두기)")}</select></div>
+      <div class="notice" id="szPrev"></div>
       <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._mkSeats()">저장</button></div>`);
+    const prev=()=>{ const f=val("szFloor"), z=val("szZone"), r=val("szRow"), a=parseInt(val("szFrom"),10), t=val("szTo"); const e=$("szPrev"); if(!e) return;
+      e.textContent=`📍 ${f||"?"}층 ${z}존 ${r}${String(a).padStart(2,"0")}`+(t&&parseInt(t,10)>a?` ~ ${r}${String(t).padStart(2,"0")} (${parseInt(t,10)-a+1}자리)`:""); };
+    ["szFloor","szRow","szFrom","szTo"].forEach(i=>{ const e=$(i); if(e){ e.addEventListener("input",prev); e.addEventListener("change",prev); } });
+    document.querySelectorAll('[data-opt="szZone"] .opt').forEach(b=>b.addEventListener("click",()=>setTimeout(prev,0)));
+    prev();
   },
   async _mkSeats(){
-    const floor=val("szFloor"), zone=val("szZone"), a=parseInt(val("szFrom"),10), bRaw=val("szTo"), b=bRaw?parseInt(bRaw,10):a, pid=val("szPid")||null;
+    const floor=val("szFloor"), zone=val("szZone"), row=val("szRow"), a=parseInt(val("szFrom"),10), bRaw=val("szTo"), b=bRaw?parseInt(bRaw,10):a, pid=val("szPid")||null;
     if(!floor){ toast("층을 넣어 주세요"); return; }
     if(!zone){ toast("존을 골라 주세요"); return; }
-    if(!(a>0&&b>=a&&b-a<200)){ toast("좌석번호를 확인해 주세요 (한 번에 최대 200석)"); return; }
-    const exist=new Set(S.seats.filter(s=>seatFloor(s)===floor&&seatZone(s)===zone).map(s=>String(s.num)));
+    if(!(a>=1&&b>=a&&b<=16)){ toast("끝 번호는 시작 번호보다 커야 해요"); return; }
+    const exist=new Set(S.seats.filter(s=>seatFloor(s)===floor&&seatZone(s)===zone&&(s.row||"")===row).map(s=>String(s.num)));
     let made=0;
     const ok=await write(async db=>{
       if(pid&&a===b){ for(const o of S.seats.filter(x=>x.personId===pid)) await db.doc("seats/"+o.id).set(Object.assign({},stripId(o),{personId:null})); }
-      for(let n=a;n<=b;n++){ if(exist.has(String(n))) continue; made++; await db.doc("seats/"+uidGen()).set({floor,zone,num:n,personId:(pid&&a===b)?pid:null,note:"",updated:today()}); }
+      for(let n=a;n<=b;n++){ if(exist.has(String(n))) continue; made++; await db.doc("seats/"+uidGen()).set({floor,zone,row,num:n,personId:(pid&&a===b)?pid:null,note:"",updated:today()}); }
     },null);
-    if(ok){ closeModal(); S.seatFloor=floor; render(); toast(made?`${floor}층 ${zone}존에 ${made}자리를 만들었어요`:"이미 있는 자리예요"); }
+    if(ok){ closeModal(); S.seatFloor=floor; S.seatZone=zone; render(); toast(made?`${floor}층 ${zone}존 ${row}열에 ${made}자리를 만들었어요`:"이미 있는 자리예요"); }
+  },
+
+  /* 구글 시트로 보내기 */
+  async syncSheet(btn){
+    if(btn){ btn.disabled=true; btn.dataset.t=btn.textContent; btn.textContent="보내는 중…"; }
+    try{
+      const j=await api({action:"sync"});
+      S.lastSync=j.time||new Date().toLocaleString("ko-KR");
+      toast("구글 시트로 보냈어요 ("+S.lastSync+")");
+    }catch(e){ toast(e&&e.code==="bad"?"서버 코드가 예전 버전이에요. Code.gs를 새로 붙여 넣어 주세요.":"보내지 못했어요. 인터넷 연결을 확인해 주세요."); }
+    finally{ if(btn){ btn.disabled=false; btn.textContent=btn.dataset.t; } if(S.view==="manage") render(); }
   },
 
   /* 사진 */
@@ -1034,7 +1094,7 @@ const App={
     add("과제",projectNames().map(n=>{ const pj=projByName(n)||{}; return {"과제":n,"고객사":pj.client||"","장소":pj.place||"","시작":pj.start||"","종료":pj.end||"","참여 인원":S.people.filter(p=>(p.project||"").trim()===n).map(p=>p.name).join(", "),"메모":pj.note||""}; }));
     const hist=[]; S.pcs.forEach(p=>(p.history||[]).forEach(x=>hist.push({"PC이름":p.name,"날짜":x.date,"이전 사용자":x.from,"새 사용자":x.to,"상태":x.status||"","메모":x.memo||"","기록한 사람":x.by||""})));
     hist.sort((a,b)=>(a["날짜"]||"").localeCompare(b["날짜"]||"")); add("PC변경기록",hist);
-    add("좌석",S.seats.slice().sort((a,b)=>natural(seatFloor(a)+seatZone(a)+String(a.num).padStart(4,"0"),seatFloor(b)+seatZone(b)+String(b.num).padStart(4,"0"))).map(s=>({"층":seatFloor(s),"존":seatZone(s),"번호":s.num,"사용자":pname(s.personId),"메모":s.note||""})));
+    add("좌석",S.seats.slice().sort((a,b)=>natural(seatFloor(a)+seatZone(a)+seatSortKey(a),seatFloor(b)+seatZone(b)+seatSortKey(b))).map(s=>({"층":seatFloor(s),"존":seatZone(s),"열":s.row||"","번호":s.num,"좌석":seatCode(s),"사용자":pname(s.personId),"메모":s.note||""})));
     const g=[]; gSections().forEach((s,i)=>(s.steps||[]).forEach((st,k)=>g.push({"단계":`${i+1}. ${s.title}`,"순서":k+1,"할 일":st.title,"설명":st.desc||"","담당·문의":st.who||""}))); add("입주가이드",g);
     try{ X.writeFile(wb,`나노디자인_백업_${today()}.xlsx`); toast("엑셀 파일을 받았어요"); }
     catch(e){ toast("파일을 받지 못했어요"); }
