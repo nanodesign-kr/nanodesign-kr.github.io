@@ -285,6 +285,22 @@ a.lnk{display:inline-flex;align-items:center;gap:4px;color:var(--pri);font-weigh
 mark{background:#fde68a;color:#1b2333;border-radius:3px;padding:0 1px}
 .flash{animation:flash 2s ease}
 @keyframes flash{0%,40%{box-shadow:0 0 0 3px var(--orange);background:var(--orange-soft)}100%{box-shadow:none}}
+.help .hblk{padding:4px 0 10px;border-bottom:1px dashed var(--line);margin-bottom:10px}
+.help .hblk:last-child{border-bottom:0;margin-bottom:0}
+.help h4{margin:0 0 6px;font-size:14px}
+.help ul,.help ol{margin:0;padding-left:20px}
+.help li{margin-bottom:6px;font-size:13px}
+.help li > b{display:block;font-size:13px}
+.help li span b{display:inline;color:var(--ink)}
+.help li span{color:var(--sub)}
+.help p{margin:4px 0 0;font-size:12px}
+.contact-card{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:12px}
+.ceo-link{position:relative;flex:none;display:block;border-radius:50%}
+.ceo-call{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:13px;border:2px solid var(--card)}
+.ceo{width:72px;height:72px;border-radius:50%;object-fit:cover;flex:none;display:block}
+.cc-t{font-weight:800;font-size:14px}
+.cc-n{font-size:14px;margin-top:4px}
+.homehelp{display:block;text-align:center;font-size:13px;margin:10px 0 0;color:var(--pri);font-weight:700;text-decoration:none}
 .tag-admin{font-size:11px;background:var(--purple-soft);color:var(--purple);border-radius:6px;padding:1px 6px;font-weight:800;margin-left:4px}
 </style>
 </head>
@@ -326,7 +342,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.12-9";
+const APP_VER="2026.11.12-10";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -540,11 +556,53 @@ function vHome(){
     <button class="btn soft big" onclick="location.hash='#projects';setTimeout(()=>App.editProject(),50)">📁 과제 추가하기</button>
   </div>
   <button class="btn big" style="margin-top:12px" onclick="App.syncSheet(this)">📤 구글 시트로 보내기</button>`;
-  o+=`<p class="muted" style="text-align:center;font-size:12px;margin:22px 0 0">앱 버전 ${APP_VER}</p>`;
+  o+=`<a class="homehelp" href="#manage" onclick="setTimeout(()=>{const e=document.getElementById('help');if(e)e.scrollIntoView({block:'start'});},200)">❓ 도움말 · 앱 사용 방법 · 문의</a>`;
+  o+=`<p class="muted" style="text-align:center;font-size:12px;margin:12px 0 0">앱 버전 ${APP_VER}</p>`;
   return o;
 }
 
 /* ---------- 입주가이드 ---------- */
+/* ---------- 도움말 ---------- */
+const APP_URL="https://nanodesign-kr.github.io";
+const CEO_TEL="01031946497";
+function helpHtml(){
+  const li=(t,d)=>`<li><b>${t}</b><span>${d}</span></li>`;
+  return `<h2 class="sec" id="help">❓ 도움말 · 앱 사용 방법</h2>
+  <div class="card help">
+    <div class="hblk"><h4>🔗 앱 주소</h4>
+      <div class="lnk-row"><a class="lnk" href="${APP_URL}" target="_blank" rel="noopener">🔗 ${APP_URL.replace("https://","")}</a><button type="button" class="copy" onclick="App.copy('${APP_URL}')">복사</button></div>
+      <p class="muted">이 주소를 팀원에게 보내 주세요. 팀 비밀번호는 팀 리더에게 따로 받아요.</p></div>
+    <div class="hblk"><h4>📱 휴대폰에 설치</h4><ul>
+      ${li("안드로이드","<b>크롬</b>으로 앱 주소 열기 → 오른쪽 위 ⋮ → <b>홈 화면에 추가</b> (삼성 인터넷 ❌)")}
+      ${li("아이폰","<b>사파리</b>로 앱 주소 열기 → 아래 공유(□↑) → <b>홈 화면에 추가</b>")}
+      ${li("업데이트 확인","홈 화면 맨 아래 <b>앱 버전</b>을 보세요. 예전 화면이 계속 보이면 앱을 완전히 닫았다 다시 열거나, 크롬에서 아래로 당겨 새로고침해요.")}
+    </ul></div>
+    <div class="hblk"><h4>🙋 처음 시작하기</h4><ol>
+      ${li("팀 비밀번호 입력","처음 한 번만 넣으면 그 휴대폰에서는 다시 묻지 않아요.")}
+      ${li("내 정보 입력하기","홈 화면의 <b>🙋 내 정보 입력하기</b>에서 이름 → 근무 위치 → 과제 → 자리(층·존·열·번호) → PC를 한 번에 넣어요.")}
+      ${li("입주가이드 따라 하기","테라타워에 처음 왔다면 ‘입주가이드’를 위에서부터 하고, 끝낸 일은 네모를 눌러 ✔ 표시해요.")}
+    </ol></div>
+    <div class="hblk"><h4>🧭 화면별 사용법</h4><ul>
+      ${li("🏠 홈","맨 위 <b>🔍 검색</b>으로 사람·PC·IP·과제·가이드 문구를 한 번에 찾아요. <b>📤 구글 시트로 보내기</b>로 시트를 바로 정리해요.")}
+      ${li("📋 입주가이드","🔗 링크를 누르면 사이트가 열리고, 📞 번호를 누르면 바로 전화돼요 (내선 번호도 자동). <b>사내망 전용</b> 주소는 회사 PC에서만 열리니 ‘복사’해서 쓰세요.")}
+      ${li("💻 PC","PC를 누르면 <b>사용자 바꾸기</b>, 바뀐 기록, <b>📷 사진 추가</b>를 할 수 있어요. 사용자 이름을 누르면 그 사람의 과제·좌석이 보여요.")}
+      ${li("🪑 좌석","<b>배치도</b>에서 층·존을 골라 자리를 누르면 앉을 사람을 정해요. 자리가 없으면 <b>＋ 좌석 입력</b>(층·존·열·번호, 예: 4층 D존 I01).")}
+      ${li("📁 과제","과제명을 누르면 멤버가 펼쳐지고, ✏️로 과제 정보(공정·고객사(부서)·기간·멤버)를 고쳐요. 막대 그래프는 <b>초록 = 진행된 기간</b>이에요.")}
+      ${li("👥 인원","나노디자인 전체 인원의 연락처·과제·계정 정보를 봐요. 이름을 <b>길게 누르면</b> 고치기·삭제 메뉴가 나와요.")}
+      ${li("🎨 화면 색","왼쪽 위 🎨 버튼에서 Light / Gray / Dark / Pink / Green 중에 골라요.")}
+    </ul></div>
+    <div class="hblk"><h4>🔐 권한과 보안</h4><ul>
+      ${li("팀 비밀번호","누구나 사람·과제·PC·좌석 정보를 넣고 고칠 수 있어요.")}
+      ${li("관리자 모드","삭제와 입주가이드 고치기만 관리자 비밀번호가 필요해요 (⚙️ 관리 → 관리자 모드).")}
+      ${li("넣지 말 것","비밀번호, 보안프로그램 설정, 사내 문서 내용은 적지 마세요.")}
+    </ul></div>
+  </div>
+  <div class="contact-card">
+    <a href="tel:${CEO_TEL}" class="ceo-link" aria-label="김춘호 대표님께 전화하기"><img src="ceo.png" alt="김춘호 대표님" class="ceo"><span class="ceo-call">📞</span></a>
+    <div><div class="cc-t">💬 건의사항 · 기타 문의</div><div class="cc-n"><b>김춘호 대표님</b>께 말씀해 주세요.</div><div class="muted" style="font-size:12px;margin-top:2px">사진을 누르면 바로 전화가 연결돼요 · 앱에 바라는 점도 언제든 환영해요 😊</div></div>
+  </div>`;
+}
+
 /* ---------- 전체 검색 ---------- */
 function normQ(t){ return String(t||"").toLowerCase().replace(/\s+/g," ").trim(); }
 function hit(text,q,qd){
@@ -803,13 +861,7 @@ function vManage(){
   o+=`<p class="muted" style="text-align:center;font-size:12px;margin-top:20px">앱 버전 ${APP_VER}</p>`;
   o+=`<h2 class="sec">🚪 로그아웃</h2><div class="card"><div class="row"><div style="flex:1" class="muted">이 휴대폰에 저장된 팀 비밀번호를 지워요.</div><button class="btn sm ghost" onclick="App.logout()">로그아웃</button></div></div>`;
   o+=`<h2 class="sec">🔒 보안 지켜 주세요</h2><div class="alert warn"><span class="ic">⚠️</span><div>이 앱 내용은 회사 밖 구글 시트에 저장돼요. 아래 정보는 <b>절대 넣지 마세요.</b><ul style="margin:6px 0 0;padding-left:18px"><li>비밀번호, 사내 계정 ID</li><li>보안프로그램 설정, 사내 문서 내용</li></ul>팀 비밀번호는 팀원끼리만 나누고 밖으로 보내지 마세요.</div></div>`;
-  o+=`<h2 class="sec">❓ 사용법</h2><div class="card help"><ol style="margin:0;padding-left:20px">
-    <li><b>처음 쓰는 분</b> → 홈 화면의 <b>🙋 내 정보 입력하기</b>에서 이름·과제·좌석·PC를 한 번에 넣으세요.</li>
-    <li><b>처음 왔다면</b> → 오른쪽 위 ⚙️ ‘관리’에서 내 이름을 고르고, ‘입주가이드’를 위에서부터 따라 하세요.</li>
-    <li><b>PC 주인이 바뀌면</b> → ‘PC’에서 그 PC를 누르고 <b>사용자 바꾸기</b>. 기록이 자동으로 남아요.</li>
-    <li><b>자리를 옮기면</b> → ‘좌석’ 배치도에서 새 자리를 누르고 이름을 고르세요. 예전 자리는 자동으로 비워져요. 자리가 없으면 ‘＋ 좌석 입력’으로 층·존·번호를 넣으세요.</li>
-    <li><b>외부 과제로 나가면</b> → ‘과제’나 ‘인원’에서 이름을 눌러 상태를 <b>외부 과제</b>로 바꾸면 PC·좌석 비우기를 도와줘요.</li>
-  </ol></div>`;
+  o+=helpHtml();
   return o;
 }
 
