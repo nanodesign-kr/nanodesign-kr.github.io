@@ -179,6 +179,7 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .gdesc{background:var(--gray-soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--sub);margin:10px 0}
 .step{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
 .step:last-child{border-bottom:0}
+.step.info .infoic{width:28px;flex:none;text-align:center;font-size:16px;margin-top:2px}
 .chk{width:28px;height:28px;border-radius:9px;border:2px solid var(--line2);background:var(--card);flex:none;display:grid;place-items:center;font-size:17px;color:#fff;margin-top:1px}
 .chk.on{background:var(--green);border-color:var(--green)}
 .step .st{font-weight:700}
@@ -311,7 +312,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.12-7";
+const APP_VER="2026.11.12-8";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -529,11 +530,13 @@ function vHome(){
 }
 
 /* ---------- 입주가이드 ---------- */
+/* info:true 인 항목은 체크박스 없이 안내만 보여 주고, 진행률 계산에서도 빠져요 */
+const tasksOf=s=>(s.steps||[]).filter(x=>!x.info);
 function gSections(){ return (S.guide&&Array.isArray(S.guide.sections))?S.guide.sections:[]; }
 function vGuide(){
   const secs=gSections(), done=(S.myPid&&S.progress[S.myPid])||{};
-  const all=secs.reduce((n,s)=>n+(s.steps||[]).length,0);
-  const fin=secs.reduce((n,s)=>n+(s.steps||[]).filter(st=>done[st.id]).length,0);
+  const all=secs.reduce((n,s)=>n+tasksOf(s).length,0);
+  const fin=secs.reduce((n,s)=>n+tasksOf(s).filter(st=>done[st.id]).length,0);
   let o=`<h1 class="page">📋 입주가이드</h1><p class="lead">테라타워에 처음 오면 위에서부터 차례대로 하면 돼요. 끝낸 일은 네모를 눌러 ✔ 표시하세요. 🔗 링크를 누르면 사이트가 바로 열려요. <b>사내망 전용</b> 주소는 회사 PC에서만 열리니, 휴대폰에서는 ‘복사’해서 PC로 보내 쓰세요.</p>`;
   if(isAdmin()) o+=`<div class="row" style="margin-bottom:14px"><button class="btn ${S.guideEdit?"":"ghost"}" onclick="App.toggleGuideEdit()">${S.guideEdit?"✅ 편집 끝내기":"✏️ 가이드 내용 고치기"}</button>${S.guideEdit?`<button class="btn soft" onclick="App.editSection(-1)">＋ 새 단계 묶음 추가</button>`:""}</div>`;
   if(!S.myPid&&secs.length) o+=`<div class="alert info" style="margin-bottom:14px"><span class="ic">🙋</span><div style="flex:1"><b>체크하려면 내 이름을 먼저 골라 주세요</b><div style="margin-top:8px"><button class="btn sm" onclick="App.pickMe()">내 이름 고르기</button></div></div></div>`;
@@ -541,11 +544,12 @@ function vGuide(){
   if(!secs.length) return o+`<div class="empty"><div class="ic">📄</div><b>아직 가이드가 없어요.</b><br>${isAdmin()?"위의 ‘가이드 내용 고치기’를 눌러 만들어 주세요.":"관리자가 곧 채워 줄 거예요."}</div>`;
   if(!S.openSecs){ S.openSecs={}; const f=firstOpen(secs,done); if(f>=0&&secs[f]) S.openSecs[secs[f].id||f]=true; }
   secs.forEach((s,i)=>{
-    const steps=s.steps||[], sf=steps.filter(st=>done[st.id]).length, allDone=steps.length&&sf===steps.length;
+    const steps=s.steps||[], tk=tasksOf(s), sf=tk.filter(st=>done[st.id]).length, allDone=tk.length&&sf===tk.length;
     const key=s.id||i;
-    o+=`<details class="gsec" data-sec="${h(key)}" ontoggle="App.secToggle(this)" ${S.guideEdit||S.openSecs[key]?"open":""}><summary><span class="gnum ${allDone&&S.myPid?"done":""}">${allDone&&S.myPid?"✔":i+1}</span><span class="gt">${h(s.title)}</span><span class="gp">${S.myPid?`${sf}/${steps.length}`:`${steps.length}개`}</span></summary><div class="gbody">`;
+    o+=`<details class="gsec" data-sec="${h(key)}" ontoggle="App.secToggle(this)" ${S.guideEdit||S.openSecs[key]?"open":""}><summary><span class="gnum ${allDone&&S.myPid?"done":""}">${allDone&&S.myPid?"✔":i+1}</span><span class="gt">${h(s.title)}</span><span class="gp">${!tk.length?"안내":S.myPid?`${sf}/${tk.length}`:`${tk.length}개`}</span></summary><div class="gbody">`;
     if(s.desc) o+=`<div class="gdesc">${linkify(s.desc)}</div>`;
     steps.forEach(st=>{
+      if(st.info){ o+=`<div class="step info"><span class="infoic" aria-hidden="true">📌</span><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${linkify(st.desc)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`; return; }
       const on=!!done[st.id];
       o+=`<div class="step ${on?"on":""}"><button class="chk ${on?"on":""}" aria-label="완료 표시" onclick="App.toggleStep('${h(st.id)}')" ${S.myPid?"":"disabled"}>${on?"✔":""}</button><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${linkify(st.desc)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`;
     });
@@ -571,7 +575,7 @@ function linkify(t){
     return `<span class="lnk-row"><a class="lnk" href="${href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 ${raw}</a>${isInternal(u)?`<span class="lnk-note">사내망 전용</span>`:""}<button type="button" class="copy" onclick="event.stopPropagation();App.copy('${href}')">복사</button></span>`;
   });
 }
-function firstOpen(secs,done){ for(let i=0;i<secs.length;i++){ const st=secs[i].steps||[]; if(!st.length||st.some(x=>!done[x.id])) return i; } return -1; }
+function firstOpen(secs,done){ for(let i=0;i<secs.length;i++){ const st=tasksOf(secs[i]); if(st.length&&st.some(x=>!done[x.id])) return i; } return -1; }
 
 /* ---------- PC ---------- */
 function vPcs(bodyOnly){
@@ -835,7 +839,7 @@ const App={
   async _secSave(){
     App._collectSec(); const {i,s}=App._sec;
     if(!s.title){ toast("묶음 이름을 써 주세요"); return; }
-    s.steps=s.steps.map(st=>({id:st.id,title:st.title.trim(),desc:(st.desc||"").trim(),who:(st.who||"").trim()})).filter(st=>st.title);
+    s.steps=s.steps.map(st=>Object.assign({id:st.id,title:st.title.trim(),desc:(st.desc||"").trim(),who:(st.who||"").trim()},st.info?{info:true}:{})).filter(st=>st.title);
     const secs=JSON.parse(JSON.stringify(gSections()));
     if(i>=0) secs[i]=s; else secs.push(s);
     if(await write(db=>db.doc("guide/main").set({sections:secs,updated:today()}),"가이드를 저장했어요")) closeModal();
@@ -1146,7 +1150,7 @@ const App={
     const p=person(id); if(!p) return;
     const st=P_ST[p.status]||{c:"b-gray"}, n=dday(p.contractEnd);
     const pcs=S.pcs.filter(x=>x.personId===id), seat=S.seats.find(s=>s.personId===id);
-    const secs=gSections(), all=secs.reduce((k,s)=>k+(s.steps||[]).length,0), dn=S.progress[id]||{}, fin=secs.reduce((k,s)=>k+(s.steps||[]).filter(x=>dn[x.id]).length,0);
+    const secs=gSections(), all=secs.reduce((k,s)=>k+tasksOf(s).length,0), dn=S.progress[id]||{}, fin=secs.reduce((k,s)=>k+tasksOf(s).filter(x=>dn[x.id]).length,0);
     const needClean=p.status!=="테라타워 근무"&&(pcs.some(x=>x.status==="사용중")||seat);
     openModal(`<div class="row"><h3 style="flex:1">👤 ${h(p.name)}</h3><span class="badge ${st.c}">${h(p.status||"-")}</span></div>
       ${needClean?`<div class="alert warn" style="margin:12px 0"><span class="ic">🧹</span><div style="flex:1"><b>PC·좌석 정리가 필요해요</b>테라타워에 없는데 아직 이 사람 것으로 되어 있어요.<div style="margin-top:8px"><button class="btn sm" onclick="App.cleanUp('${h(id)}')">한 번에 비우기</button></div></div></div>`:""}
