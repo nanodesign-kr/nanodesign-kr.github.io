@@ -104,9 +104,7 @@ header.top .in{max-width:860px;margin:0 auto;padding:10px 12px;display:flex;alig
 .ctb-l{font-weight:800;white-space:nowrap}
 .ctb-l.green{color:var(--green)}.ctb-l.orange{color:var(--orange)}.ctb-l.red,.ctb-l.over{color:var(--red)}
 .ctb-track{height:10px;border-radius:99px;background:var(--gray-soft);overflow:hidden;flex:1}
-.ctb-track i{display:block;height:100%;border-radius:99px;background:var(--sub);opacity:.45}
-.ctb-track.green i{background:var(--green);opacity:.75}.ctb-track.orange i{background:var(--orange);opacity:.8}.ctb-track.red i,.ctb-track.over i{background:var(--red);opacity:.8}
-.ctb-track.nostart i{opacity:.18}
+.ctb-track i{display:block;height:100%;border-radius:99px;background:#22c55e}
 .ctb-hint{font-size:11px;color:var(--sub);margin-top:4px}
 .ctb.sm{display:flex;align-items:center;gap:8px;margin-top:6px}
 .ctb.sm .ctb-track{height:7px}
@@ -313,7 +311,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.12-6";
+const APP_VER="2026.11.12-7";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -652,9 +650,10 @@ function ctBar(start,end,small){
   if(start){ const a=new Date(start+"T00:00:00"), b=new Date(end+"T00:00:00"), t=new Date(today()+"T00:00:00"); const tot=(b-a)/86400000; if(tot>0) pct=Math.max(0,Math.min(100,Math.round((t-a)/86400000/tot*100))); }
   const cls=left<0?"over":left<=7?"red":left<=30?"orange":"green";
   const txt=left<0?`${-left}일 지남`:left===0?"오늘 종료":`남은 ${left}일`;
-  const track=pct!=null?`<div class="ctb-track ${cls}" title="남은 기간 ${100-pct}%"><i style="width:${Math.max(left<0?0:2,100-pct)}%"></i></div>`:`<div class="ctb-track ${cls} nostart"><i style="width:100%"></i></div>`;
+  /* 초록 = 지금까지 진행된 기간 (예: 전체의 20%가 지났으면 20%만 초록) */
+  const track=pct!=null?`<div class="ctb-track" title="진행 ${pct}%"><i style="width:${pct}%"></i></div>`:`<div class="ctb-track nostart"></div>`;
   if(small) return `<div class="ctb sm">${track}<span class="ctb-l ${cls}">${txt}</span></div>`;
-  return `<div class="ctb"><div class="ctb-top"><span>📅 ${fmtDate(start)} ~ ${fmtDate(end)}</span><b class="ctb-l ${cls}">${txt}${pct!=null?` · ${100-pct}% 남음`:""}</b></div>${track}${pct==null?`<div class="ctb-hint">시작일을 넣으면 진행률이 보여요</div>`:""}</div>`;
+  return `<div class="ctb"><div class="ctb-top"><span>📅 ${fmtDate(start)} ~ ${fmtDate(end)}</span><b class="ctb-l ${cls}">${pct!=null?`진행 ${pct}% · `:""}${txt}</b></div>${track}${pct==null?`<div class="ctb-hint">시작일을 넣으면 진행률이 보여요</div>`:""}</div>`;
 }
 function personRow(p,withProject){
   const st=P_ST[p.status]||{c:"b-gray"}, n=dday(p.contractEnd);
