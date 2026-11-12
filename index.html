@@ -271,6 +271,20 @@ a.lnk{display:inline-flex;align-items:center;gap:4px;color:var(--pri);font-weigh
 .pchk{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--card)}
 .pchk input{width:20px;height:20px;flex:none}
 .pchk small{color:var(--sub)}
+.gsearch{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 10px;margin-top:12px;height:40px}
+.gsearch span{font-size:14px;opacity:.7}
+.gsearch input{flex:1;border:0;background:transparent;font-size:16px;height:38px;min-width:0;outline:none;color:var(--ink)}
+.gres-box{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-top:6px;padding:6px;max-height:60vh;overflow:auto}
+.gres-n{font-size:12px;color:var(--sub);padding:4px 8px}
+.gres-g{font-size:12px;font-weight:800;padding:8px 8px 4px;color:var(--ink)}
+.gres-i{display:block;width:100%;text-align:left;border:0;background:transparent;border-radius:9px;padding:8px 10px;color:var(--ink);cursor:pointer}
+.gres-i:active,.gres-i:hover{background:var(--pri-soft)}
+.gres-i b{display:block;font-size:14px}
+.gres-i span{display:block;font-size:12px;color:var(--sub);margin-top:2px;word-break:break-all}
+.gres-empty{font-size:13px;color:var(--sub);padding:10px 4px}
+mark{background:#fde68a;color:#1b2333;border-radius:3px;padding:0 1px}
+.flash{animation:flash 2s ease}
+@keyframes flash{0%,40%{box-shadow:0 0 0 3px var(--orange);background:var(--orange-soft)}100%{box-shadow:none}}
 .tag-admin{font-size:11px;background:var(--purple-soft);color:var(--purple);border-radius:6px;padding:1px 6px;font-weight:800;margin-left:4px}
 </style>
 </head>
@@ -312,7 +326,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.12-8";
+const APP_VER="2026.11.12-9";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -502,7 +516,8 @@ function vHome(){
   const ending=S.people.filter(p=>p.status==="테라타워 근무"&&p.contractEnd&&dday(p.contractEnd)<=30).sort((a,b)=>(a.contractEnd||"").localeCompare(b.contractEnd||""));
   const leftover=S.people.filter(p=>p.status!=="테라타워 근무"&&(S.pcs.some(x=>x.personId===p.id&&x.status==="사용중")||S.seats.some(s=>s.personId===p.id)));
   const me=S.myPid&&person(S.myPid);
-  let o=`<h1 class="page">안녕하세요${me?", "+h(me.name)+"님":""} 👋</h1><p class="lead">테라타워 현황을 한눈에 볼 수 있어요. 카드를 누르면 자세히 보여요.</p>`;
+  let o=`<div class="gsearch"><span aria-hidden="true">🔍</span><input id="gq" type="search" placeholder="검색: 이름, PC, IP, 과제, 가이드 문구…" value="${h(S.gq||"")}" oninput="App.gSearch(this.value)" autocomplete="off"></div><div id="gres">${S.gq?searchHtml(S.gq):""}</div>`;
+  o+=`<h1 class="page">안녕하세요${me?", "+h(me.name)+"님":""} 👋</h1><p class="lead">테라타워 현황을 한눈에 볼 수 있어요. 카드를 누르면 자세히 보여요.</p>`;
   {
     const mp=me&&S.pcs.filter(x=>x.personId===me.id).map(x=>x.name).join(", "), ms=me&&S.seats.find(x=>x.personId===me.id);
     o+=`<div class="alert info" style="margin-bottom:14px"><span class="ic">🙋</span><div style="flex:1"><b>${me?"내 정보":"처음이세요? 내 정보를 넣어 주세요"}</b>${me?`📁 ${h(me.project||"과제 없음")} · 🪑 ${ms?h(seatLabel(ms)):"자리 없음"} · 💻 ${h(mp||"PC 없음")}`:"이름, 과제, 좌석, PC를 한 화면에서 넣을 수 있어요."}<div style="margin-top:8px"><button class="btn sm" onclick="App.myInfo()">${me?"✏️ 내 정보 수정":"🙋 내 정보 입력하기"}</button></div></div></div>`;
@@ -530,6 +545,57 @@ function vHome(){
 }
 
 /* ---------- 입주가이드 ---------- */
+/* ---------- 전체 검색 ---------- */
+function normQ(t){ return String(t||"").toLowerCase().replace(/\s+/g," ").trim(); }
+function hit(text,q,qd){
+  const t=String(text||""); if(!t) return false;
+  if(t.toLowerCase().includes(q)) return true;
+  if(qd&&qd.length>=3&&t.replace(/\D/g,"").includes(qd)) return true;   /* 전화번호·IP는 숫자만으로도 찾아요 */
+  return false;
+}
+function mark(text,q){
+  const t=String(text||""), i=t.toLowerCase().indexOf(q);
+  if(i<0) return h(t);
+  return h(t.slice(0,i))+"<mark>"+h(t.slice(i,i+q.length))+"</mark>"+h(t.slice(i+q.length));
+}
+function snippet(text,q){
+  const t=String(text||"").replace(/\s+/g," "), i=t.toLowerCase().indexOf(q);
+  if(i<0) return h(t.slice(0,60));
+  const a=Math.max(0,i-18), b=Math.min(t.length,i+q.length+30);
+  return (a?"…":"")+mark(t.slice(a,b),q)+(b<t.length?"…":"");
+}
+function searchHtml(raw){
+  const q=normQ(raw); if(q.length<1) return "";
+  const qd=/^[\d\s\-.]+$/.test(q)?q.replace(/\D/g,""):"";
+  const R=[];
+  S.people.forEach(p=>{
+    const f=[p.name,p.nameEn,p.rank,p.status,p.project,p.contact,p.email,p.knox,p.ssoId,p.vwpId,p.note];
+    if(f.some(x=>hit(x,q,qd))){ const which=f.find(x=>hit(x,q,qd)); R.push({g:"👤 사람",t:mark(p.name,q),s:which!==p.name?snippet(which,q):h(p.project||p.status||""),on:`App.personDetail('${h(p.id)}')`}); }
+  });
+  S.pcs.forEach(p=>{
+    const f=[p.name,p.model,p.mfgNo,p.serial,p.mac,p.ip,pname(p.personId),p.note];
+    if(f.some(x=>hit(x,q,qd))){ const which=f.find(x=>hit(x,q,qd)); R.push({g:"💻 PC",t:mark(p.name,q),s:which!==p.name?snippet(which,q):h(pname(p.personId)||""),on:`App.pcDetail('${h(p.id)}')`}); }
+  });
+  projectNames().forEach(n=>{
+    const pj=projByName(n)||{}, f=[n,pj.process,pj.client,pj.place,pj.note];
+    if(f.some(x=>hit(x,q,qd))){ const which=f.find(x=>hit(x,q,qd)); R.push({g:"📁 과제",t:mark(n,q),s:which!==n?snippet(which,q):`${S.people.filter(p=>(p.project||"").trim()===n).length}명`,on:`App.goProject(this.dataset.n)`,data:n}); }
+  });
+  S.seats.forEach(st=>{
+    const lab=seatLabel(st), who=pname(st.personId);
+    if(hit(lab,q,qd)||hit(seatCode(st),q,qd)||hit(st.note,q,qd)) R.push({g:"🪑 좌석",t:mark(lab,q),s:h(who||"빈자리"),on:`App.seatDetail('${h(st.id)}')`});
+  });
+  gSections().forEach((sec,i)=>{
+    (sec.steps||[]).forEach(st=>{
+      const f=[st.title,st.desc,st.who];
+      if(f.some(x=>hit(x,q,qd))){ const which=f.find(x=>hit(x,q,qd)); R.push({g:"📋 입주가이드",t:mark(st.title,q),s:`<span class="muted">${h(sec.title)}</span>${which!==st.title?" · "+snippet(which,q):""}`,on:`App.goStep('${h(sec.id||i)}','${h(st.id)}')`}); }
+    });
+    if(hit(sec.title,q,qd)||hit(sec.desc,q,qd)) R.push({g:"📋 입주가이드",t:mark(sec.title,q),s:sec.desc?snippet(sec.desc,q):"",on:`App.goStep('${h(sec.id||i)}','')`});
+  });
+  if(!R.length) return `<div class="gres-empty">‘${h(raw.trim())}’ 검색 결과가 없어요.</div>`;
+  const groups={}; R.forEach(r=>(groups[r.g]=groups[r.g]||[]).push(r));
+  return `<div class="gres-box"><div class="gres-n">검색 결과 ${R.length}개</div>`+Object.keys(groups).map(g=>`<div class="gres-g">${g} <span class="muted">${groups[g].length}</span></div>`+groups[g].slice(0,8).map(r=>`<button class="gres-i" ${r.data!=null?`data-n="${h(r.data)}"`:""} onclick="${r.on}"><b>${r.t}</b>${r.s?`<span>${r.s}</span>`:""}</button>`).join("")+(groups[g].length>8?`<div class="muted" style="font-size:12px;padding:4px 10px">… 외 ${groups[g].length-8}개 (검색어를 더 자세히 써 보세요)</div>`:"")).join("")+`</div>`;
+}
+
 /* info:true 인 항목은 체크박스 없이 안내만 보여 주고, 진행률 계산에서도 빠져요 */
 const tasksOf=s=>(s.steps||[]).filter(x=>!x.info);
 function gSections(){ return (S.guide&&Array.isArray(S.guide.sections))?S.guide.sections:[]; }
@@ -549,9 +615,9 @@ function vGuide(){
     o+=`<details class="gsec" data-sec="${h(key)}" ontoggle="App.secToggle(this)" ${S.guideEdit||S.openSecs[key]?"open":""}><summary><span class="gnum ${allDone&&S.myPid?"done":""}">${allDone&&S.myPid?"✔":i+1}</span><span class="gt">${h(s.title)}</span><span class="gp">${!tk.length?"안내":S.myPid?`${sf}/${tk.length}`:`${tk.length}개`}</span></summary><div class="gbody">`;
     if(s.desc) o+=`<div class="gdesc">${linkify(s.desc)}</div>`;
     steps.forEach(st=>{
-      if(st.info){ o+=`<div class="step info"><span class="infoic" aria-hidden="true">📌</span><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${linkify(st.desc)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`; return; }
+      if(st.info){ o+=`<div class="step info" id="st-${h(st.id)}"><span class="infoic" aria-hidden="true">📌</span><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${linkify(st.desc)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`; return; }
       const on=!!done[st.id];
-      o+=`<div class="step ${on?"on":""}"><button class="chk ${on?"on":""}" aria-label="완료 표시" onclick="App.toggleStep('${h(st.id)}')" ${S.myPid?"":"disabled"}>${on?"✔":""}</button><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${linkify(st.desc)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`;
+      o+=`<div class="step ${on?"on":""}" id="st-${h(st.id)}"><button class="chk ${on?"on":""}" aria-label="완료 표시" onclick="App.toggleStep('${h(st.id)}')" ${S.myPid?"":"disabled"}>${on?"✔":""}</button><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${linkify(st.desc)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`;
     });
     if(S.guideEdit) o+=`<div class="row" style="margin-top:12px"><button class="btn sm soft" onclick="App.editSection(${i})">✏️ 이 묶음 고치기</button><button class="btn sm ghost" onclick="App.moveSection(${i},-1)" ${i===0?"disabled":""}>▲ 위로</button><button class="btn sm ghost" onclick="App.moveSection(${i},1)" ${i===secs.length-1?"disabled":""}>▼ 아래로</button><span class="sp"></span><button class="btn sm danger" onclick="App.delSection(${i})">삭제</button></div>`;
     o+=`</div></details>`;
@@ -979,6 +1045,15 @@ const App={
       for(let n=a;n<=b;n++){ if(exist.has(String(n))) continue; made++; await db.doc("seats/"+uidGen()).set({floor,zone,row,num:n,personId:(pid&&a===b)?pid:null,note:"",updated:today()}); }
     },null);
     if(ok){ closeModal(); S.seatFloor=floor; S.seatZone=zone; render(); toast(made?`${floor}층 ${zone}존 ${row}열에 ${made}자리를 만들었어요`:"이미 있는 자리예요"); }
+  },
+
+  /* 검색 */
+  gSearch(v){ S.gq=v; const b=$("gres"); if(b) b.innerHTML=v.trim()?searchHtml(v):""; },
+  goProject(n){ S.openProj={}; S.openProj[n]=true; location.hash="#projects"; setTimeout(()=>{ const b=document.querySelector(`.pjt[data-key="${CSS.escape(n)}"]`); if(b){ b.scrollIntoView({block:"start"}); b.closest(".grp").classList.add("flash"); } },150); },
+  goStep(sec,step){
+    if(!S.openSecs) S.openSecs={}; S.openSecs[sec]=true;
+    if(location.hash!=="#guide") location.hash="#guide"; else render();
+    setTimeout(()=>{ const el=step?$("st-"+step):document.querySelector(`details[data-sec="${CSS.escape(sec)}"]`); if(el){ el.scrollIntoView({block:"center"}); el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),2200); } },160);
   },
 
   /* 내 정보 한 번에 입력: 이름 → 과제 → 좌석 → PC */
