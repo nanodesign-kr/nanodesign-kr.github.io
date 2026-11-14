@@ -8,11 +8,11 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f3f5f9" id="themeColor">
-<script>try{var t=localStorage.getItem("nd_theme");if(t==="dimgray")t="gray";if(/^(dark|gray|pink|green)$/.test(t||""))document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<script>try{var t=localStorage.getItem("nd_theme");if(t==="dimgray")t="gray";if(/^(dark|gray|pink|green|brown)$/.test(t||""))document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="나노디자인">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=Roboto:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" async></script>
 <style>
 :root{
@@ -50,6 +50,21 @@
   --gray-soft:#e2efe7;
   --seat-used-b:#9fd6b9; --seat-used-c:#17583a; --seat-free-b:#cde6d6;
 }
+:root[data-theme="brown"]{
+  --bg:#f2ebe0; --card:#fbf7f0; --card2:#f6efe4; --ink:#3d2e22; --sub:#7d6957; --line:#e2d4c1; --line2:#cfbca3; --hdr:rgba(242,235,224,.95);
+  --pri:#946541; --pri-soft:#eee0cd;
+  --green:#5f7d4b; --green-soft:#e5eadb;
+  --orange:#b5713a; --orange-soft:#f4e3cd;
+  --gray:#7d6957; --gray-soft:#ebe1d3;
+  --red:#a4473b; --red-soft:#f2ddd6;
+  --purple:#7c5b78; --purple-soft:#eee2ea;
+  --seat-used-b:#d2b28f; --seat-used-c:#6b4528; --seat-free-b:#c9d3b6;
+}
+/* 브라운: 오래된 종이 같은 은은한 결 + 제목은 명조체로 엔틱하게 */
+:root[data-theme="brown"] body{background:radial-gradient(ellipse at top,#f7f1e7 0%,#f2ebe0 55%,#ebe1d3 100%) fixed}
+:root[data-theme="brown"] h1.page,:root[data-theme="brown"] h2.sec,:root[data-theme="brown"] .sheet h3,:root[data-theme="brown"] .gsec .gt{font-family:"Noto Serif KR",serif;letter-spacing:-.2px}
+:root[data-theme="brown"] .alert.info{border-color:var(--line2)}
+:root[data-theme="brown"] .card,:root[data-theme="brown"] .item,:root[data-theme="brown"] .gsec,:root[data-theme="brown"] .grp,:root[data-theme="brown"] .stat{box-shadow:0 1px 0 rgba(120,90,60,.08)}
 :root[data-theme="dark"]{
   --bg:#0e131c; --card:#171e2b; --card2:#1d2535; --ink:#e6ebf4; --sub:#97a3b6; --line:#2a3446; --line2:#3a465c; --hdr:rgba(14,19,28,.94);
   --pri:#6b9bff; --pri-soft:#1c2a47;
@@ -347,7 +362,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.14-1";
+const APP_VER="2026.11.14-2";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -480,12 +495,12 @@ function start(){
   setInterval(()=>{ if(document.visibilityState==="visible") load(true); },30000);
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") load(true); });
 }
-const THEMES=[["light","Light"],["gray","Gray"],["dark","Dark"],["pink","Pink"],["green","Green"]];
+const THEMES=[["light","Light"],["gray","Gray"],["dark","Dark"],["pink","Pink"],["green","Green"],["brown","Brown"]];
 function applyTheme(t){
   if(t==="dimgray") t="gray";
   t=THEMES.some(x=>x[0]===t)?t:"light";
   document.documentElement.setAttribute("data-theme",t);
-  const m=$("themeColor"); if(m) m.setAttribute("content",{dark:"#0e131c",gray:"#5b6069",light:"#f3f5f9",pink:"#fcedf3",green:"#eaf6ee"}[t]);
+  const m=$("themeColor"); if(m) m.setAttribute("content",{dark:"#0e131c",gray:"#5b6069",light:"#f3f5f9",pink:"#fcedf3",green:"#eaf6ee",brown:"#f2ebe0"}[t]);
 }
 /* 입주가이드 체크: 화면에 바로 반영하고, 서버 저장은 순서대로 한 번에 보내요 (체크가 풀리는 문제 방지) */
 function queueProgress(){
