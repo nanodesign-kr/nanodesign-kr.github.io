@@ -12,7 +12,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="나노디자인">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=Roboto:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" async></script>
 <style>
 :root{
@@ -62,7 +63,7 @@
 }
 /* 브라운: 오래된 종이 같은 은은한 결 + 제목은 명조체로 엔틱하게 */
 :root[data-theme="brown"] body{background:radial-gradient(ellipse at top,#f7f1e7 0%,#f2ebe0 55%,#ebe1d3 100%) fixed}
-:root[data-theme="brown"] h1.page,:root[data-theme="brown"] h2.sec,:root[data-theme="brown"] .sheet h3,:root[data-theme="brown"] .gsec .gt{font-family:"Noto Serif KR",serif;letter-spacing:-.2px}
+:root[data-theme="brown"] h1.page,:root[data-theme="brown"] h2.sec,:root[data-theme="brown"] .sheet h3,:root[data-theme="brown"] .gsec .gt{font-family:"Gowun Batang",serif;font-weight:700;letter-spacing:-.3px}
 :root[data-theme="brown"] .alert.info{border-color:var(--line2)}
 :root[data-theme="brown"] .card,:root[data-theme="brown"] .item,:root[data-theme="brown"] .gsec,:root[data-theme="brown"] .grp,:root[data-theme="brown"] .stat{box-shadow:0 1px 0 rgba(120,90,60,.08)}
 :root[data-theme="dark"]{
@@ -77,7 +78,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Roboto","Noto Sans KR",system-ui,sans-serif;font-size:14px;line-height:1.55;-webkit-text-size-adjust:100%;word-break:keep-all;overflow-wrap:anywhere}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;font-size:14px;line-height:1.55;-webkit-text-size-adjust:100%;word-break:keep-all;overflow-wrap:anywhere}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 .wrap{max-width:860px;margin:0 auto;padding:0 16px 100px}
@@ -362,7 +363,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.14-2";
+const APP_VER="2026.11.14-3";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
