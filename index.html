@@ -112,7 +112,8 @@ header.top .in{max-width:860px;margin:0 auto;padding:10px 12px;display:flex;alig
 .sortsel{height:34px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:12px;font-weight:700;padding:0 6px}
 [data-lp]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 [data-lp].pressing{background:var(--pri-soft)}
-@media(max-width:360px){.brand img{height:22px}}
+.brand img{height:28px!important}
+@media(max-width:340px){.brand img{height:24px!important}}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
 nav.tabs .in{max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
 nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 9px;text-decoration:none;color:var(--sub);font-size:11px;font-weight:700;white-space:nowrap;word-break:keep-all;letter-spacing:-.4px;min-width:0;overflow:hidden}
@@ -307,7 +308,7 @@ mark{background:#fde68a;color:#1b2333;border-radius:3px;padding:0 1px}
 <body>
 <header class="top"><div class="in">
   <div id="themeBox"></div>
-  <a href="#home" class="brand" aria-label="나노디자인 홈"><img src="logo-nano.png" alt="NANO 나노디자인"></a>
+  <a href="#home" class="brand" aria-label="나노디자인 홈"><img src="logo-nanodesign.png" alt="NANO DESIGN 나노디자인"></a>
   <div class="who" id="who"></div>
 </div><div id="robar"></div></header>
 
@@ -342,7 +343,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.12-11";
+const APP_VER="2026.11.12-12";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -507,7 +508,7 @@ function render(){
   renderTop();
   const v=$("view");
   if(S.err==="noapi"){ v.innerHTML=`<h1 class="page">서버 연결 설정</h1><p class="lead">구글 시트 웹 앱 주소(…/exec)를 넣어 주세요. 한 번만 하면 돼요.</p><div class="f"><input id="apiUrl" placeholder="https://script.google.com/macros/s/…/exec"></div><button class="btn big" onclick="App.saveApi()">저장</button>`; $("tabs").innerHTML=""; return; }
-  if(S.err==="login"){ v.innerHTML=`<div style="text-align:center;margin:40px 0 20px"><img src="logo-nano.png" alt="NANO" style="height:56px"><h1 class="page" style="margin-top:14px">나노디자인</h1><p class="lead">팀 비밀번호를 넣어 주세요. 한 번 넣으면 이 휴대폰에서는 다시 묻지 않아요.</p></div><div class="f"><input id="loginPw" type="password" placeholder="팀 비밀번호" onkeydown="if(event.key==='Enter')App.login()"></div><button class="btn big" onclick="App.login()">들어가기</button><p class="muted" style="text-align:center;font-size:14px">비밀번호는 팀 리더에게 물어보세요.</p>`; $("tabs").innerHTML=""; return; }
+  if(S.err==="login"){ v.innerHTML=`<div style="text-align:center;margin:40px 0 20px"><img src="logo-nanodesign.png" alt="NANO DESIGN" style="height:44px;max-width:90%"><h1 class="page" style="margin-top:14px">나노디자인</h1><p class="lead">팀 비밀번호를 넣어 주세요. 한 번 넣으면 이 휴대폰에서는 다시 묻지 않아요.</p></div><div class="f"><input id="loginPw" type="password" placeholder="팀 비밀번호" onkeydown="if(event.key==='Enter')App.login()"></div><button class="btn big" onclick="App.login()">들어가기</button><p class="muted" style="text-align:center;font-size:14px">비밀번호는 팀 리더에게 물어보세요.</p>`; $("tabs").innerHTML=""; return; }
   const loading=!S.connected;
   let html="";
   if(loading){
