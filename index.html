@@ -372,7 +372,8 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.14-5";
+const SEAT_MAX=20;
+const APP_VER="2026.11.14-6";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -410,7 +411,7 @@ const ROWS="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 function seatCode(s){ return s.row?`${s.row}${String(s.num).padStart(2,"0")}`:`${s.num}번`; }
 function seatLabel(s){ if(!s) return ""; const f=seatFloor(s), z=seatZone(s); return (f||z)?`${f?f+"층 ":""}${z?z+"존 ":""}${seatCode(s)}`:`${s.zone||""} ${seatCode(s)}`.trim(); }
 const seatSortKey=s=>(s.row||"")+String(s.num).padStart(3,"0");
-function numOptions(sel,from){ let o=""; for(let i=from||1;i<=16;i++) o+=`<option value="${i}" ${String(i)===String(sel)?"selected":""}>${String(i).padStart(2,"0")}</option>`; return o; }
+function numOptions(sel,from){ let o=""; for(let i=from||1;i<=SEAT_MAX;i++) o+=`<option value="${i}" ${String(i)===String(sel)?"selected":""}>${String(i).padStart(2,"0")}</option>`; return o; }
 function rowOptions(sel){ return ROWS.map(r=>`<option value="${r}" ${r===sel?"selected":""}>${r}열</option>`).join(""); }
 function projectNames(){ const set=new Set(); S.projects.forEach(p=>p.name&&set.add(p.name.trim())); S.people.forEach(p=>p.project&&set.add(p.project.trim())); S.pcs.forEach(p=>p.project&&set.add(p.project.trim())); return [...set].filter(Boolean).sort(natural); }
 const projByName=n=>S.projects.find(p=>(p.name||"").trim()===(n||"").trim());
@@ -799,7 +800,7 @@ function vSeats(){
   const my=S.myPid&&S.seats.find(s=>s.personId===S.myPid);
   let o=`<h1 class="page">🪑 좌석 현황</h1><p class="lead">자리를 누르면 앉을 사람을 정하거나 비울 수 있어요. <span class="badge b-green">빈자리</span> <span class="badge b-blue">사용 중</span>${my?` <span class="badge b-orange">내 자리: ${h(seatLabel(my))}</span>`:""}</p>`;
   o+=`<div class="card" style="margin-bottom:12px"><div class="row"><b>사용 중 ${used}석 · 빈자리 ${S.seats.length-used}석</b><span class="sp"></span><button class="btn sm" onclick="App.addSeats()">＋ 좌석 입력</button></div></div>`;
-  if(!S.seats.length) return o+`<div class="empty"><div class="ic">🪑</div><b>등록된 좌석이 없어요.</b><br>‘＋ 좌석 입력’에서 층, 존(A~D), 열(A~Z), 번호(1~16)를 고르면 배치도가 만들어져요. 예) 4층 D존 I01</div>`;
+  if(!S.seats.length) return o+`<div class="empty"><div class="ic">🪑</div><b>등록된 좌석이 없어요.</b><br>‘＋ 좌석 입력’에서 층, 존(A~D), 열(A~Z), 번호(1~20)를 고르면 배치도가 만들어져요. 예) 4층 D존 I01</div>`;
   o+=`<div class="vsw"><button class="${S.seatView==="map"?"on":""}" onclick="App.seatViewSet('map')">🗺️ 배치도</button><button class="${S.seatView==="list"?"on":""}" onclick="App.seatViewSet('list')">📋 목록</button></div>`;
   if(floors.length>1||S.seatView==="map") o+=`<div class="chips">${floors.map(f=>{ const arr=S.seats.filter(s=>(seatFloor(s)||"기타")===f); return `<button class="chip ${S.seatFloor===f?"on":""}" onclick="App.seatFloorSet('${h(f)}')">${f==="기타"?"기타":h(f)+"층"} ${arr.filter(s=>s.personId).length}/${arr.length}</button>`; }).join("")}</div>`;
   if(S.seatView==="map"){
@@ -1148,7 +1149,7 @@ const App={
       <div class="f"><label>층</label><input id="szFloor" type="number" inputmode="numeric" value="${h(fl)}" placeholder="예) 4"></div>
       <div class="f"><label>존</label>${optButtons("szZone",ZONES,S.seatZone&&ZONES.includes(S.seatZone)?S.seatZone:"A")}</div>
       <div class="f"><label>열 (A~Z)</label><select id="szRow">${rowOptions("A")}</select></div>
-      <div class="row"><div class="f" style="flex:1;min-width:110px"><label>번호 (1~16)</label><select id="szFrom">${numOptions(1)}</select></div><div class="f" style="flex:1;min-width:110px"><label>끝 번호 <em>(여러 자리)</em></label><select id="szTo"><option value="">한 자리만</option>${numOptions("")}</select></div></div>
+      <div class="row"><div class="f" style="flex:1;min-width:110px"><label>번호 (1~20)</label><select id="szFrom">${numOptions(1)}</select></div><div class="f" style="flex:1;min-width:110px"><label>끝 번호 <em>(여러 자리)</em></label><select id="szTo"><option value="">한 자리만</option>${numOptions("")}</select></div></div>
       <div class="f"><label>앉을 사람 <em>(한 자리만 넣을 때, 선택)</em></label><select id="szPid">${personOptions("","(빈자리로 두기)")}</select></div>
       <div class="notice" id="szPrev"></div>
       <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._mkSeats()">저장</button></div>`);
@@ -1162,7 +1163,7 @@ const App={
     const floor=val("szFloor"), zone=val("szZone"), row=val("szRow"), a=parseInt(val("szFrom"),10), bRaw=val("szTo"), b=bRaw?parseInt(bRaw,10):a, pid=val("szPid")||null;
     if(!floor){ toast("층을 넣어 주세요"); return; }
     if(!zone){ toast("존을 골라 주세요"); return; }
-    if(!(a>=1&&b>=a&&b<=16)){ toast("끝 번호는 시작 번호보다 커야 해요"); return; }
+    if(!(a>=1&&b>=a&&b<=SEAT_MAX)){ toast("끝 번호는 시작 번호보다 커야 해요"); return; }
     const exist=new Set(S.seats.filter(s=>seatFloor(s)===floor&&seatZone(s)===zone&&(s.row||"")===row).map(s=>String(s.num)));
     let made=0;
     const ok=await write(async db=>{
