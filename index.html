@@ -173,6 +173,8 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .search{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card);font-size:16px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
 .chip{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-weight:700;font-size:12px}
+.zchips{margin:-4px 0 12px;gap:6px}
+.zchips .chip{padding:4px 10px;font-size:11.5px}
 .chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .alert{display:flex;gap:12px;align-items:flex-start;border-radius:var(--r);padding:14px 16px;border:1px solid}
 .alert .ic{font-size:18px;line-height:1.3}
@@ -370,7 +372,7 @@ const P_ST={
   "대기":{c:"b-gray"}
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
-const APP_VER="2026.11.14-4";
+const APP_VER="2026.11.14-5";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -803,12 +805,19 @@ function vSeats(){
   if(S.seatView==="map"){
     const fl=S.seatFloor, arr=S.seats.filter(s=>(seatFloor(s)||"기타")===fl);
     const zs=ZONES.slice(); arr.forEach(s=>{ const z=seatZone(s)||"기타"; if(!zs.includes(z)) zs.push(z); });
-    /* 전체 그림: 층 전체를 A·B / C·D 존으로 한눈에 */
-    o+=`<div class="fmap">`+zs.filter(z=>ZONES.includes(z)||arr.some(s=>(seatZone(s)||"기타")===z)).map(z=>{
+    /* 존 선택: 층 칩처럼 작게. 보통 한 층에 한 존만 쓰니 기본은 내 존(없으면 좌석 많은 존) */
+    const zWith=zs.filter(z=>arr.some(s=>(seatZone(s)||"기타")===z));
+    const zCnt=z=>arr.filter(s=>(seatZone(s)||"기타")===z).length;
+    let cur=S.seatZone;
+    if(cur!=="*"&&!zWith.includes(cur)){
+      const myS=arr.find(s=>s.personId&&s.personId===S.myPid);
+      cur=myS?(seatZone(myS)||"기타"):zWith.slice().sort((x,y)=>zCnt(y)-zCnt(x))[0];
+    }
+    if(zWith.length>1) o+=`<div class="chips zchips">`+zWith.map(z=>{
       const za=arr.filter(s=>(seatZone(s)||"기타")===z), u=za.filter(s=>s.personId).length, mine=za.some(s=>s.personId&&s.personId===S.myPid);
-      return `<button class="zbox zov ${za.length?"":"empty-z"} ${S.seatZone===z?"sel":""}" onclick="App.seatZoneSet('${h(z)}')"><h4>${h(z)}존 ${mine?"⭐":""}</h4><div class="zstat"><b>${u}</b> / ${za.length}석</div><div class="zbar"><i style="width:${za.length?Math.round(u/za.length*100):0}%"></i></div></button>`;
-    }).join("")+`<div class="door">${fl==="기타"?"":h(fl)+"층 "}전체 배치 · 존을 누르면 그 존만 보여요 (실제 위치와 다를 수 있어요)</div></div>`;
-    const showZ=S.seatZone&&zs.includes(S.seatZone)?[S.seatZone]:zs;
+      return `<button class="chip ${cur===z?"on":""}" onclick="App.seatZoneSet('${h(z)}')">${h(z)}존${mine?" ⭐":""} ${u}/${za.length}</button>`;
+    }).join("")+`<button class="chip ${cur==="*"?"on":""}" onclick="App.seatZoneSet('*')">전체</button></div>`;
+    const showZ=cur==="*"?zWith:[cur];
     showZ.forEach(z=>{
       const za=arr.filter(s=>(seatZone(s)||"기타")===z).sort((a,b)=>natural(seatSortKey(a),seatSortKey(b)));
       if(!za.length) return;
@@ -816,7 +825,6 @@ function vSeats(){
       o+=`<div class="zdet"><h3>📍 ${fl==="기타"?"":h(fl)+"층 "}${h(z)}존 <span class="muted" style="font-weight:500;font-size:13px">(${za.filter(s=>s.personId).length}/${za.length})</span></h3>`+
         rows.map(r=>`<div class="srow"><span class="rlab">${r?h(r):"-"}</span><div class="rstrip">${za.filter(s=>(s.row||"")===r).map(s=>seatTile(s,"ms")).join("")}</div></div>`).join("")+`</div>`;
     });
-    if(S.seatZone) o+=`<button class="btn ghost" style="width:100%;margin-top:6px" onclick="App.seatZoneSet('')">모든 존 보기</button>`;
     return o;
   }
   floors.forEach(f=>{
@@ -1105,7 +1113,7 @@ const App={
   /* 좌석 */
   seatViewSet(v){ S.seatView=v; render(); },
   seatFloorSet(f){ S.seatFloor=f; S.seatZone=""; render(); },
-  seatZoneSet(z){ S.seatZone=(S.seatZone===z?"":z); render(); },
+  seatZoneSet(z){ S.seatZone=z; render(); },
   seatDetail(id){
     const s=S.seats.find(x=>x.id===id); if(!s) return;
     openModal(`<h3>🪑 ${h(seatLabel(s))} 자리</h3><p class="hint">지금: <b>${h(pname(s.personId)||"빈자리")}</b></p>
