@@ -173,6 +173,10 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .search{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card);font-size:16px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
 .chip{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-weight:700;font-size:12px}
+.postit{position:relative;background:#fff59d;color:#4a3b00;padding:18px 16px 14px;margin:10px 4px 18px;border-radius:2px 2px 16px 2px;box-shadow:0 8px 16px -6px rgba(0,0,0,.25);transform:rotate(-1.2deg);font-size:13.5px;line-height:1.65;font-weight:600}
+.postit::before{content:"";position:absolute;top:-10px;left:50%;width:76px;height:20px;margin-left:-38px;background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.07);transform:rotate(2deg)}
+.postit b{display:block;font-size:15px;margin-bottom:4px;color:#3a2e00}
+.postit u{text-decoration-color:#e11d48;text-decoration-thickness:2px;text-underline-offset:3px}
 .zchips{margin:-4px 0 12px;gap:6px}
 .zchips .chip{padding:4px 10px;font-size:11.5px}
 .chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
@@ -373,7 +377,7 @@ const P_ST={
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
 const SEAT_MAX=20;
-const APP_VER="2026.11.14-6";
+const APP_VER="2026.11.17-1";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -396,6 +400,27 @@ function dday(dateStr){
   return Math.round((e-t)/86400000);
 }
 function ddayText(n){ if(n==null) return ""; if(n===0) return "오늘 종료"; return n>0?`D-${n}`:`${-n}일 지남`; }
+/* 한국 공휴일(대체공휴일 포함) — 남은 근무일 계산용. 해마다 추가해 주세요 */
+const HOLIDAYS=new Set([
+ "2026-01-01","2026-02-16","2026-02-17","2026-02-18","2026-03-02","2026-05-01","2026-05-05","2026-05-25","2026-06-03","2026-07-17","2026-08-17","2026-09-24","2026-09-25","2026-10-05","2026-10-09","2026-12-25",
+ "2027-01-01","2027-02-08","2027-02-09","2027-03-01","2027-05-03","2027-05-05","2027-05-13","2027-07-19","2027-08-16","2027-09-14","2027-09-15","2027-09-16","2027-10-04","2027-10-11","2027-12-27",
+ "2028-01-25","2028-01-26","2028-01-27","2028-03-01","2028-04-12","2028-05-01","2028-05-02","2028-05-05","2028-06-06","2028-07-17","2028-08-15","2028-10-02","2028-10-03","2028-10-04","2028-10-05","2028-10-09","2028-12-25"
+]);
+/* 오늘부터 끝나는 날까지(둘 다 포함) 주말·공휴일 뺀 평일 수 */
+function workdays(end){
+  if(!end) return null;
+  const [y,m,d]=today().split("-").map(Number), [Y,M,D]=end.split("-").map(Number);
+  const t=new Date(y,m-1,d), e=new Date(Y,M-1,D); let n=0;
+  const iso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+  for(;t<=e;t.setDate(t.getDate()+1)){ const w=t.getDay(); if(w&&w!==6&&!HOLIDAYS.has(iso(t))) n++; }
+  return n;
+}
+/* 계정 만료일 (PC 정보에 함께 적어요) */
+const EXP_KEYS=[["ssoExp","SSO"],["vwpExp","OneCloud(VWP)"],["edmExp","EDM"]], EXP_WARN=15;
+function pcExpList(p){ return EXP_KEYS.filter(([k])=>p[k]).map(([k,l])=>({k,l,d:p[k],n:dday(p[k])})); }
+function pcExpWarn(p){ return pcExpList(p).filter(x=>x.n!=null&&x.n<=EXP_WARN); }
+function expText(n){ return n<0?`${-n}일 지남`:n===0?"오늘 만료":`D-${n}`; }
+function expBadges(p){ return pcExpWarn(p).map(x=>`<span class="badge ${x.n<0?"b-red":"b-orange"}">⏰ ${h(x.l)} ${expText(x.n)}</span>`).join(" "); }
 function fmtDate(s){ if(!s) return "-"; const [y,m,d]=s.split("-"); return `${y}.${m}.${d}`; }
 function uidGen(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function toast(msg){ const t=$("toast"); t.innerHTML=`<div class="toast">${h(msg)}</div>`; clearTimeout(toast._t); toast._t=setTimeout(()=>t.innerHTML="",2600); }
@@ -610,8 +635,9 @@ function vHome(){
   o+=`<h2 class="sec">🔔 확인이 필요해요</h2>`;
   const al=[];
   ending.forEach(p=>{ const n=dday(p.contractEnd); al.push(`<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">⏰</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${n<0?"b-red":"b-orange"}">${ddayText(n)}</span></div><div class="meta">계약 종료 ${fmtDate(p.contractEnd)} · PC·좌석 인계를 준비해 주세요</div></div><span class="arrow">›</span></button>`); });
+  S.pcs.filter(p=>pcExpWarn(p).length).sort((a,b)=>Math.min(...pcExpWarn(a).map(x=>x.n))-Math.min(...pcExpWarn(b).map(x=>x.n))).forEach(p=>{ const mine=S.myPid&&p.personId===S.myPid; al.push(`<button class="item" data-lp="pc:${h(p.id)}" onclick="App.pcDetail('${h(p.id)}')"><span style="font-size:22px">🔑</span><div class="main"><div class="nm">${mine?"⭐ 내 계정":h(pname(p.personId)||p.name)} ${expBadges(p)}</div><div class="meta">💻 ${h(p.name)} · 계정 만료 전에 연장해 주세요</div></div><span class="arrow">›</span></button>`); });
   leftover.forEach(p=>{ al.push(`<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">🧹</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${P_ST[p.status]?P_ST[p.status].c:"b-gray"}">${h(p.status||"-")}</span></div><div class="meta">테라타워에 없는데 PC나 좌석이 아직 이 사람으로 되어 있어요</div></div><span class="arrow">›</span></button>`); });
-  o+=al.length?`<div class="list">${al.join("")}</div>`:`<div class="alert ok"><span class="ic">✅</span><div><b>지금은 확인할 일이 없어요.</b>계약 종료 30일 전부터 여기에 알려 드려요.</div></div>`;
+  o+=al.length?`<div class="list">${al.join("")}</div>`:`<div class="alert ok"><span class="ic">✅</span><div><b>지금은 확인할 일이 없어요.</b>계약 종료 30일 전, 계정 만료 15일 전부터 여기에 알려 드려요.</div></div>`;
   o+=`<h2 class="sec">⚡ 자주 하는 일</h2><div class="grid g2">
     <button class="btn soft big" onclick="location.hash='#guide'">📋 처음 왔어요</button>
     <button class="btn soft big" onclick="location.hash='#pcs'">🔁 PC 사용자 바꾸기</button>
@@ -769,13 +795,16 @@ function firstOpen(secs,done){ for(let i=0;i<secs.length;i++){ const st=tasksOf(
 function vPcs(bodyOnly){
   let list=S.pcs.slice().sort((a,b)=>natural(a.name||"",b.name||""));
   const counts={전체:list.length}; Object.keys(PC_ST).forEach(k=>counts[k]=list.filter(p=>p.status===k).length);
-  if(S.pcFilter!=="전체") list=list.filter(p=>p.status===S.pcFilter);
+  counts["만료"]=list.filter(p=>pcExpWarn(p).length).length;
+  if(S.pcFilter==="만료") list=list.filter(p=>pcExpWarn(p).length);
+  else if(S.pcFilter!=="전체") list=list.filter(p=>p.status===S.pcFilter);
   const q=S.pcQ.trim().toLowerCase();
   if(q) list=list.filter(p=>[p.name,p.model,p.mfgNo,p.serial,p.mac,p.ip,pname(p.personId),pcLinked(p).proj,pcLinked(p).seat?seatLabel(pcLinked(p).seat):"",p.note].join(" ").toLowerCase().includes(q));
   let o=`<h1 class="page">💻 PC 현황</h1><p class="lead">PC를 누르면 <b>사용자 바꾸기</b>, 바뀐 기록, <b>📷 사진 추가</b>를 할 수 있어요. 길게 누르면 고치기·삭제가 나와요.</p>`;
+  o+=`<div class="postit"><b>📌 꼭 해 주세요</b>PC 로그온 / OneCloud / VWP / Knox / SSO 비밀번호를 <u>본인 책상에 붙여 주세요.</u><br>과제 미진행 기간에 계정 연장을 위해 필요합니다.</div>`;
   o+=`<div class="row" style="margin-bottom:12px"><input class="search" style="flex:1;min-width:180px" placeholder="🔍 PC 이름, 사용자, 과제로 찾기" value="${h(S.pcQ)}" oninput="App.pcSearch(this.value)"><button class="btn" onclick="App.editPc()">＋ PC 등록</button></div>`;
   const head=o; o="";
-  o+=`<div class="chips">${["전체",...Object.keys(PC_ST)].map(k=>`<button class="chip ${S.pcFilter===k?"on":""}" onclick="App.pcFilter('${k}')">${k==="대기"?"대기(남는 PC)":k} ${counts[k]}</button>`).join("")}</div>`;
+  o+=`<div class="chips">${["전체",...Object.keys(PC_ST)].map(k=>`<button class="chip ${S.pcFilter===k?"on":""}" onclick="App.pcFilter('${k}')">${k==="대기"?"대기(남는 PC)":k} ${counts[k]}</button>`).join("")}${counts["만료"]||S.pcFilter==="만료"?`<button class="chip ${S.pcFilter==="만료"?"on":""}" style="${S.pcFilter==="만료"?"":"border-color:var(--orange);color:var(--orange)"}" onclick="App.pcFilter('만료')">⏰ 계정 만료 임박 ${counts["만료"]}</button>`:""}</div>`;
   if(!S.pcs.length) o+=`<div class="empty"><div class="ic">💻</div><b>등록된 PC가 없어요.</b><br>‘＋ PC 등록’을 눌러 첫 PC를 넣어 주세요.</div>`;
   else if(!list.length) o+=`<div class="empty">찾는 PC가 없어요.</div>`;
   else o+=`<div class="list" id="pclist">`+list.map(pcItem).join("")+`</div>`;
@@ -785,7 +814,7 @@ function vPcs(bodyOnly){
 function pcLinked(p){ const per=person(p.personId); const seat=per&&S.seats.find(s=>s.personId===per.id); return {per, proj:(per&&per.project)||p.project||"", seat}; }
 function pcItem(p){
   const st=PC_ST[p.status]||{c:"b-gray"}, L=pcLinked(p);
-  return `<button class="item" data-lp="pc:${h(p.id)}" onclick="App.pcDetail('${h(p.id)}')"><span style="font-size:24px">💻</span><div class="main"><div class="nm">${h(p.name||"(이름 없음)")} <span class="badge ${st.c}">${h(p.status||"-")}</span></div><div class="meta">👤 ${L.per?h(L.per.name):'<span class="muted">사용자 없음</span>'}${p.ip?" · 🌐 "+h(p.ip):""}</div></div><span class="arrow">›</span></button>`;
+  return `<button class="item" data-lp="pc:${h(p.id)}" onclick="App.pcDetail('${h(p.id)}')"><span style="font-size:24px">💻</span><div class="main"><div class="nm">${h(p.name||"(이름 없음)")} <span class="badge ${st.c}">${h(p.status||"-")}</span> ${expBadges(p)}</div><div class="meta">👤 ${L.per?h(L.per.name):'<span class="muted">사용자 없음</span>'}${p.ip?" · 🌐 "+h(p.ip):""}</div></div><span class="arrow">›</span></button>`;
 }
 
 /* ---------- 좌석 ---------- */
@@ -847,11 +876,13 @@ function ctBar(start,end,small){
   let pct=null;
   if(start){ const a=new Date(start+"T00:00:00"), b=new Date(end+"T00:00:00"), t=new Date(today()+"T00:00:00"); const tot=(b-a)/86400000; if(tot>0) pct=Math.max(0,Math.min(100,Math.round((t-a)/86400000/tot*100))); }
   const cls=left<0?"over":left<=7?"red":left<=30?"orange":"green";
+  const wd=left>=0?workdays(end):null;
   const txt=left<0?`${-left}일 지남`:left===0?"오늘 종료":`남은 ${left}일`;
+  const wtxt=wd!=null?(small?` · 근무 ${wd}일`:` · 근무일 ${wd}일`):"";
   /* 초록 = 지금까지 진행된 기간 (예: 전체의 20%가 지났으면 20%만 초록) */
   const track=pct!=null?`<div class="ctb-track" title="진행 ${pct}%"><i style="width:${pct}%"></i></div>`:`<div class="ctb-track nostart"></div>`;
-  if(small) return `<div class="ctb sm">${track}<span class="ctb-l ${cls}">${txt}</span></div>`;
-  return `<div class="ctb"><div class="ctb-top"><span>📅 ${fmtDate(start)} ~ ${fmtDate(end)}</span><b class="ctb-l ${cls}">${pct!=null?`진행 ${pct}% · `:""}${txt}</b></div>${track}${pct==null?`<div class="ctb-hint">시작일을 넣으면 진행률이 보여요</div>`:""}</div>`;
+  if(small) return `<div class="ctb sm">${track}<span class="ctb-l ${cls}">${txt}${wtxt}</span></div>`;
+  return `<div class="ctb"><div class="ctb-top"><span>📅 ${fmtDate(start)} ~ ${fmtDate(end)}</span><b class="ctb-l ${cls}">${pct!=null?`진행 ${pct}% · `:""}${txt}${wtxt}</b></div>${track}${wd!=null?`<div class="ctb-hint">근무일 = 오늘부터 종료일까지 주말·공휴일 뺀 평일</div>`:""}${pct==null?`<div class="ctb-hint">시작일을 넣으면 진행률이 보여요</div>`:""}</div>`;
 }
 function personRow(p,withProject){
   const st=P_ST[p.status]||{c:"b-gray"}, n=dday(p.contractEnd);
@@ -1057,6 +1088,7 @@ const App={
         <dt>MAC 주소</dt><dd>${h(p.mac||"-")}</dd>
         <dt>IP 주소</dt><dd>${h(p.ip||"-")}</dd>
         <dt>반입일</dt><dd>${fmtDate(p.inDate)}</dd>
+        ${EXP_KEYS.map(([k,l])=>{ const n=p[k]?dday(p[k]):null; return `<dt>${l} 만료일</dt><dd>${p[k]?fmtDate(p[k])+(n<=EXP_WARN?` <span class="badge ${n<0?"b-red":"b-orange"}">${expText(n)}</span>`:` <small class="muted">D-${n}</small>`):"-"}</dd>`; }).join("")}
         <dt>메모</dt><dd style="white-space:pre-wrap">${h(p.note||"-")}</dd>
       </dl>
       ${photoSection("pc",id,p.photos)}
@@ -1097,13 +1129,14 @@ const App={
       <div class="f"><label>MAC 주소 <em>(선택)</em></label><input id="pcMac" value="${h(p.mac||"")}" placeholder="명령 프롬프트 → ipconfig /all" autocapitalize="characters"></div>
       <div class="f"><label>IP 주소 <em>(선택)</em></label><input id="pcIp" value="${h(p.ip||"")}" placeholder="예) 000.000.000.000" inputmode="decimal"></div>
       <div class="f"><label>반입일 <em>(선택)</em></label><input type="date" id="pcIn" value="${h(p.inDate||"")}"></div>
+      <div class="f"><label>계정 만료일 <em>(선택 · 만료 15일 전부터 알려 드려요)</em></label><div class="row" style="gap:8px">${EXP_KEYS.map(([k,l])=>`<div style="flex:1;min-width:120px"><small class="muted">${l}</small><input type="date" id="pc_${k}" value="${h(p[k]||"")}"></div>`).join("")}</div></div>
       <div class="f"><label>메모 <em>(선택)</em></label><textarea id="pcNote">${h(p.note||"")}</textarea></div>
       <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._savePc('${id?h(id):""}')">저장</button></div>`);
   },
   async _savePc(id){
     const name=val("pcName"); if(!name){ toast("PC 이름을 써 주세요"); return; }
     const old=id?S.pcs.find(x=>x.id===id):null;
-    const body=Object.assign({},old?stripId(old):{history:[]},{name,status:val("pcSt")||"대기",model:val("pcModel"),mfgNo:val("pcMfg"),serial:val("pcSerial"),mac:val("pcMac"),ip:val("pcIp"),inDate:val("pcIn"),note:val("pcNote"),updated:today()});
+    const body=Object.assign({},old?stripId(old):{history:[]},{name,status:val("pcSt")||"대기",model:val("pcModel"),mfgNo:val("pcMfg"),serial:val("pcSerial"),mac:val("pcMac"),ip:val("pcIp"),inDate:val("pcIn"),note:val("pcNote"),updated:today()},Object.fromEntries(EXP_KEYS.map(([k])=>[k,val("pc_"+k)||""])));
     if(!id){ body.personId=val("pcPid")||null; if(body.personId) body.history=[{date:today(),from:"",to:pname(body.personId),status:body.status,memo:"처음 등록",by:pname(S.myPid)||""}]; }
     const nid=id||uidGen();
     if(await write(db=>db.doc("pcs/"+nid).set(body),id?"고쳤어요":"PC를 등록했어요")) closeModal();
@@ -1222,7 +1255,8 @@ const App={
       ${v==="__new"?`<div class="f"><label>PC 이름</label><input id="miPcName" placeholder="예) 홍길동 PC"></div>`:""}
       <div class="row"><div class="f" style="flex:1;min-width:130px"><label>모델명</label><input id="miModel" value="${h(p.model||"")}"></div><div class="f" style="flex:1;min-width:130px"><label>제조번호</label><input id="miMfg" value="${h(p.mfgNo||"")}"></div></div>
       <div class="row"><div class="f" style="flex:1;min-width:130px"><label>시리얼넘버</label><input id="miSerial" value="${h(p.serial||"")}"></div><div class="f" style="flex:1;min-width:130px"><label>MAC 주소</label><input id="miMac" value="${h(p.mac||"")}" autocapitalize="characters"></div></div>
-      <div class="f" style="margin-bottom:0"><label>IP 주소</label><input id="miIp" value="${h(p.ip||"")}" inputmode="decimal"></div></div>`;
+      <div class="f"><label>IP 주소</label><input id="miIp" value="${h(p.ip||"")}" inputmode="decimal"></div>
+      <div class="f" style="margin-bottom:0"><label>계정 만료일 <em>(선택 · 만료 15일 전부터 알려 드려요)</em></label><div class="row" style="gap:8px">${EXP_KEYS.map(([k,l])=>`<div style="flex:1;min-width:120px"><small class="muted">${l}</small><input type="date" id="mi_${k}" value="${h(p[k]||"")}"></div>`).join("")}</div></div></div>`;
   },
   async _miSave(){
     let pid=val("miPid"); const isNew=pid==="__new"; const nm=isNew?val("miNew"):null;
@@ -1248,7 +1282,7 @@ const App={
         else await db.doc("seats/"+uidGen()).set({floor,zone,row,num,personId:pid,note:"",updated:today()});
       }
       if(pcSel){
-        const fields={model:val("miModel"),mfgNo:val("miMfg"),serial:val("miSerial"),mac:val("miMac"),ip:val("miIp")};
+        const fields=Object.assign({model:val("miModel"),mfgNo:val("miMfg"),serial:val("miSerial"),mac:val("miMac"),ip:val("miIp")},Object.fromEntries(EXP_KEYS.map(([k])=>[k,val("mi_"+k)||""])));
         if(pcSel==="__new"){
           await db.doc("pcs/"+uidGen()).set(Object.assign({name:val("miPcName"),status:"사용중",personId:pid,inDate:today(),note:"",history:[{date:today(),from:"",to:myName,status:"사용중",memo:"내 정보에서 등록",by:myName}],updated:today()},fields));
         } else {
@@ -1460,7 +1494,7 @@ const App={
     const X=window.XLSX, wb=X.utils.book_new();
     const add=(name,rows)=>{ const ws=X.utils.json_to_sheet(rows.length?rows:[{"(비어 있음)":""}]); X.utils.book_append_sheet(wb,ws,name); };
     add("사람",S.people.slice().sort(byName).map(p=>({"이름":p.name,"영문 이름":p.nameEn||"","직급":p.rank||"","상태":p.status,"과제":p.project||"","계약시작":p.contractStart||"","계약종료":p.contractEnd||"","연락처":p.contact||"","개인 이메일":p.email||"","Knox 메일":p.knox||"","RBS/SSO ID":p.ssoId||"","VWP/TOSS ID":p.vwpId||"","메모":p.note||""})));
-    add("PC",S.pcs.slice().sort((a,b)=>natural(a.name||"",b.name||"")).map(p=>({"PC이름":p.name,"상태":p.status,"사용자":pname(p.personId),"모델명":p.model||"","제조번호":p.mfgNo||"","시리얼넘버":p.serial||"","MAC 주소":p.mac||"","IP 주소":p.ip||"","반입일":p.inDate||"","메모":p.note||""})));
+    add("PC",S.pcs.slice().sort((a,b)=>natural(a.name||"",b.name||"")).map(p=>({"PC이름":p.name,"상태":p.status,"사용자":pname(p.personId),"모델명":p.model||"","제조번호":p.mfgNo||"","시리얼넘버":p.serial||"","MAC 주소":p.mac||"","IP 주소":p.ip||"","반입일":p.inDate||"","SSO 만료일":p.ssoExp||"","OneCloud(VWP) 만료일":p.vwpExp||"","EDM 만료일":p.edmExp||"","메모":p.note||""})));
     add("과제",projectNames().map(n=>{ const pj=projByName(n)||{}; return {"과제":n,"IP 종류":pj.ipType||"","공정":pj.process||"","고객사(부서)":pj.client||"","장소":pj.place||"","시작":pj.start||"","종료":pj.end||"","참여 인원":S.people.filter(p=>(p.project||"").trim()===n).map(p=>p.name).join(", "),"메모":pj.note||""}; }));
     const hist=[]; S.pcs.forEach(p=>(p.history||[]).forEach(x=>hist.push({"PC이름":p.name,"날짜":x.date,"이전 사용자":x.from,"새 사용자":x.to,"상태":x.status||"","메모":x.memo||"","기록한 사람":x.by||""})));
     hist.sort((a,b)=>(a["날짜"]||"").localeCompare(b["날짜"]||"")); add("PC변경기록",hist);
