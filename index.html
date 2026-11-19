@@ -377,7 +377,7 @@ const P_ST={
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
 const SEAT_MAX=20;
-const APP_VER="2026.11.19-1";
+const APP_VER="2026.11.19-2";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -1079,14 +1079,14 @@ const App={
     openModal(`<div class="row"><h3 style="flex:1">💻 ${h(p.name)}</h3><span class="badge ${st.c}">${h(p.status||"-")}</span></div><p class="hint">${h(st.d||"")}</p>
       <button class="btn big" onclick="App.changeUser('${h(id)}')">🔁 사용자 바꾸기</button>
       <dl class="kv" style="margin:18px 0">
-        <dt>지금 사용자</dt><dd>${L.per?`<a href="javascript:void 0" class="tel" onclick="App.personDetail('${h(L.per.id)}')">👤 ${h(L.per.name)}</a> <small class="muted">(누르면 과제·좌석 등 사람 정보)</small>`:"-"}</dd>
+        <dt>지금 사용자</dt><dd style="white-space:nowrap">${L.per?`<a href="javascript:void 0" class="tel" onclick="App.personDetail('${h(L.per.id)}')">👤 ${h(L.per.name)}</a> <small class="muted">(누르면 사람 정보)</small>`:"-"}</dd>
         <dt>모델명</dt><dd>${h(p.model||"-")}</dd>
         <dt>제조번호</dt><dd>${h(p.mfgNo||"-")}</dd>
         <dt>시리얼넘버</dt><dd>${h(p.serial||"-")}</dd>
         <dt>MAC 주소</dt><dd>${h(p.mac||"-")}</dd>
         <dt>IP 주소</dt><dd>${h(p.ip||"-")}</dd>
         <dt>반입일</dt><dd>${fmtDate(p.inDate)}</dd>
-        ${EXP_KEYS.map(([k,l])=>{ const n=p[k]?dday(p[k]):null; return `<dt>${l} 만료일</dt><dd>${p[k]?fmtDate(p[k])+(n<=EXP_WARN?` <span class="badge ${n<0?"b-red":"b-orange"}">${expText(n)}</span>`:` <small class="muted">D-${n}</small>`):"-"}</dd>`; }).join("")}
+        ${EXP_KEYS.map(([k,l])=>{ const n=p[k]?dday(p[k]):null; return `<dt>${l}만료</dt><dd>${p[k]?fmtDate(p[k])+(n<=EXP_WARN?` <span class="badge ${n<0?"b-red":"b-orange"}">${expText(n)}</span>`:` <small class="muted">D-${n}</small>`):"-"}</dd>`; }).join("")}
         <dt>메모</dt><dd style="white-space:pre-wrap">${h(p.note||"-")}</dd>
       </dl>
       ${photoSection("pc",id,p.photos)}
