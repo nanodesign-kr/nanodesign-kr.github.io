@@ -237,8 +237,8 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .opt.on{border-color:var(--pri);background:var(--pri-soft);color:var(--pri)}
 .actions{display:flex;gap:10px;margin-top:18px}
 .actions .btn{flex:1}
-.kv{display:grid;grid-template-columns:96px 1fr;gap:7px 12px;font-size:13px}
-.kv dt{color:var(--sub);font-weight:700}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:7px 12px;font-size:13px}
+.kv dt{color:var(--sub);font-weight:700;white-space:nowrap}
 .kv dd{margin:0;font-weight:500;word-break:break-all}
 .hist{border-left:3px solid var(--line);padding-left:14px;margin-left:6px}
 .hist div{padding:6px 0;font-size:13px}
@@ -377,7 +377,7 @@ const P_ST={
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
 const SEAT_MAX=20;
-const APP_VER="2026.11.17-1";
+const APP_VER="2026.11.19-1";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -777,9 +777,7 @@ function isInternal(u){ return /^https?:\/\/(\d+\.\d+\.\d+\.\d+|[^\/]*\.sec\.sam
 /* 전화번호: 누르면 바로 전화. '(외선 0 → 내선 1)', '(2→3→2)' 같은 번호도 자동으로 이어서 눌러져요 */
 function telify(html){
   return html.replace(/(^|[^\d\/.:\-])((?:0\d{1,2}|1\d{3})-\d{3,4}(?:-\d{4})?)(\s*\((?:외선\s*(\d)\s*→\s*내선\s*(\d))\)|\s*\((\d(?:\s*→\s*\d)+)\))?/g,(m,pre,num,tail,ex1,ex2,seq)=>{
-    let dial=num.replace(/-/g,"");
-    if(ex1) dial+=","+ex1+","+ex2;
-    else if(seq) dial+=","+seq.replace(/\s|→/g," ").trim().split(/\s+/).join(",");
+    const dial=num.replace(/-/g,"");  /* 기본 번호로만 연결 (내선은 통화 중에 직접 눌러요) */
     return `${pre}<a class="tel" href="tel:${dial}" onclick="event.stopPropagation()">📞 ${num}</a>${tail||""}`;
   });
 }
