@@ -385,7 +385,7 @@ const P_ST={
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
 const SEAT_MAX=20;
-const APP_VER="2026.11.22-4";
+const APP_VER="2026.11.22-5";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -424,7 +424,7 @@ function workdays(end){
   return n;
 }
 /* 계정 만료일 (PC 정보에 함께 적어요) */
-const EXP_KEYS=[["ssoExp","SSO"],["vwpExp","OneCloud(VWP)"],["edmExp","EDM"]], EXP_WARN=15;
+const EXP_KEYS=[["ssoExp","SSO"],["vwpExp","VWP(O/C)"],["edmExp","EDM"]], EXP_WARN=15;
 /* 만료일은 사람 정보에 저장. 예전에 PC 정보에 넣은 값은 그 사람 정보를 한 번 저장하기 전까지 그대로 보여요 */
 function expVal(p,k){ if(!p) return ""; if(p.expMoved||p[k]) return p[k]||""; const pc=S.pcs.find(x=>x.personId===p.id&&x[k]); return pc?pc[k]:""; }
 function pExpList(p){ return EXP_KEYS.map(([k,l])=>({k,l,d:expVal(p,k)})).filter(x=>x.d).map(x=>Object.assign(x,{n:dday(x.d)})); }
