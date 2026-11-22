@@ -201,10 +201,11 @@ h2.sec{font-size:16px;font-weight:800;margin:24px 0 10px}
 .gdesc{background:var(--gray-soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--sub);margin:10px 0}
 .step{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
 .step:last-child{border-bottom:0}
-.step.info .infoic{width:28px;flex:none;text-align:center;font-size:16px;margin-top:2px}
+.step.info .infoic{width:22px;flex:none;text-align:center;font-size:16px;margin-top:2px}
 .chk{width:28px;height:28px;border-radius:9px;border:2px solid var(--line2);background:var(--card);flex:none;display:grid;place-items:center;font-size:17px;color:#fff;margin-top:1px}
 .chk.on{background:var(--green);border-color:var(--green)}
 .step .st{font-weight:700}
+.snum{width:22px;flex:none;text-align:center;font-size:19px;line-height:1.2;font-weight:600;color:var(--pri)}
 .step.on .st{color:var(--sub);text-decoration:line-through}
 .step .sd{font-size:13px;color:var(--sub);white-space:pre-wrap}
 .step .sw{font-size:12px;color:var(--purple);font-weight:700;margin-top:2px}
@@ -385,7 +386,7 @@ const P_ST={
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
 const SEAT_MAX=20;
-const APP_VER="2026.11.22-5";
+const APP_VER="2026.11.22-6";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -771,22 +772,21 @@ function vGuide(){
   const secs=gSections(), done=(S.myPid&&S.progress[S.myPid])||{};
   const all=secs.reduce((n,s)=>n+tasksOf(s).length,0);
   const fin=secs.reduce((n,s)=>n+tasksOf(s).filter(st=>done[st.id]).length,0);
-  let o=`<h1 class="page">📋 입주가이드</h1><p class="lead">테라타워에 처음 오면 위에서부터 차례대로 하면 돼요. 끝낸 일은 네모를 눌러 ✔ 표시하세요. 🔗 링크를 누르면 사이트가 바로 열려요. <b>사내망 전용</b> 주소는 회사 PC에서만 열리니, 휴대폰에서는 ‘복사’해서 PC로 보내 쓰세요.</p>`;
+  let o=`<h1 class="page">📋 입주가이드</h1><p class="lead">테라타워에 처음 오면 위에서부터 번호 순서대로 하면 돼요. 🔗 링크를 누르면 사이트가 바로 열려요. <b>사내망 전용</b> 주소는 회사 PC에서만 열리니, 휴대폰에서는 ‘복사’해서 PC로 보내 쓰세요.</p>`;
   o+=`<div class="row" style="margin-bottom:14px"><button class="btn sm ${S.guideEdit?"":"ghost"}" onclick="App.toggleGuideEdit()">${S.guideEdit?"✅ 편집 끝내기":"✏️ 가이드 내용 고치기 (관리자)"}</button>${S.guideEdit?`<button class="btn sm soft" onclick="App.editSection(-1)">＋ 새 단계 묶음 추가</button>`:""}</div>`;
   if(S.guideEdit) o+=`<div class="alert info" style="margin-bottom:14px"><span class="ic">✏️</span><div>각 묶음을 펼치고 <b>✏️ 이 묶음 고치기</b>를 누르면 제목·설명·할 일을 고칠 수 있어요. ▲▼로 순서를 바꾸고, 할 일마다 <b>📌 안내 항목(체크 없음)</b>을 고를 수 있어요.</div></div>`;
-  if(!S.myPid&&secs.length) o+=`<div class="alert info" style="margin-bottom:14px"><span class="ic">🙋</span><div style="flex:1"><b>체크하려면 내 이름을 먼저 골라 주세요</b><div style="margin-top:8px"><button class="btn sm" onclick="App.pickMe()">내 이름 고르기</button></div></div></div>`;
-  else if(S.myPid&&all) o+=`<div class="card" style="margin-bottom:14px"><div class="row"><b>내 진행 상황</b><span class="sp"></span><b style="color:var(--green)">${fin} / ${all}</b></div><div class="bar" style="margin-top:8px"><i style="width:${all?Math.round(fin/all*100):0}%"></i></div>${fin===all?'<div style="margin-top:8px;color:var(--green);font-weight:700">🎉 모두 끝냈어요! 팀 리더에게 완료를 알려 주세요.</div>':""}</div>`;
   if(!secs.length) return o+`<div class="empty"><div class="ic">📄</div><b>아직 가이드가 없어요.</b><br>${isAdmin()?"위의 ‘가이드 내용 고치기’를 눌러 만들어 주세요.":"관리자가 곧 채워 줄 거예요."}</div>`;
-  if(!S.openSecs){ S.openSecs={}; const f=firstOpen(secs,done); if(f>=0&&secs[f]) S.openSecs[secs[f].id||f]=true; }
+  if(!S.openSecs){ S.openSecs={}; if(secs[0]) S.openSecs[secs[0].id||0]=true; }
   secs.forEach((s,i)=>{
     const steps=s.steps||[], tk=tasksOf(s), sf=tk.filter(st=>done[st.id]).length, allDone=tk.length&&sf===tk.length;
     const key=s.id||i;
-    o+=`<details class="gsec" data-sec="${h(key)}" ontoggle="App.secToggle(this)" ${S.guideEdit||S.openSecs[key]?"open":""}><summary><span class="gnum ${allDone&&S.myPid?"done":""}">${allDone&&S.myPid?"✔":i+1}</span><span class="gt">${h(s.title)}</span><span class="gp">${!tk.length?"안내":S.myPid?`${sf}/${tk.length}`:`${tk.length}개`}</span></summary><div class="gbody">`;
+    o+=`<details class="gsec" data-sec="${h(key)}" ontoggle="App.secToggle(this)" ${S.guideEdit||S.openSecs[key]?"open":""}><summary><span class="gt">${h(s.title)}</span><span class="gp">${!tk.length?"안내":`${tk.length}개`}</span></summary><div class="gbody">`;
     if(s.desc) o+=`<div class="gdesc">${linkify(s.desc)}</div>`;
+    let no=0;
     steps.forEach(st=>{
       if(st.info){ o+=`<div class="step info" id="st-${h(st.id)}"><span class="infoic" aria-hidden="true">📌</span><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${stepDesc(st)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`; return; }
-      const on=!!done[st.id];
-      o+=`<div class="step ${on?"on":""}" id="st-${h(st.id)}"><button class="chk ${on?"on":""}" aria-label="완료 표시" onclick="App.toggleStep('${h(st.id)}')" ${S.myPid?"":"disabled"}>${on?"✔":""}</button><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${stepDesc(st)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`;
+      no++;
+      o+=`<div class="step" id="st-${h(st.id)}"><span class="snum">${"①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳"[no-1]||no}</span><div><div class="st">${h(st.title)}</div>${st.desc?`<div class="sd">${stepDesc(st)}</div>`:""}${st.who?`<div class="sw">🙋 담당·문의: ${linkify(st.who)}</div>`:""}</div></div>`;
     });
     if(S.guideEdit) o+=`<div class="row" style="margin-top:12px"><button class="btn sm soft" onclick="App.editSection(${i})">✏️ 이 묶음 고치기</button><button class="btn sm ghost" onclick="App.moveSection(${i},-1)" ${i===0?"disabled":""}>▲ 위로</button><button class="btn sm ghost" onclick="App.moveSection(${i},1)" ${i===secs.length-1?"disabled":""}>▼ 아래로</button><span class="sp"></span><button class="btn sm danger" onclick="App.delSection(${i})">삭제</button></div>`;
     o+=`</div></details>`;
@@ -1074,7 +1074,7 @@ const App={
       <label style="font-weight:700;display:block;margin-bottom:8px">할 일 목록</label>
       ${s.steps.map((st,k)=>`<div class="erow"><div class="row" style="margin-bottom:8px"><b style="min-width:24px">${k+1}.</b><input class="search" style="padding:9px 10px" data-k="${k}" data-f="title" value="${h(st.title)}" placeholder="할 일 (예: 반입 신청서 작성)"></div>
         <textarea class="search" style="min-height:60px;padding:9px 10px;margin-bottom:8px" data-k="${k}" data-f="desc" placeholder="자세한 설명 (선택)">${h(st.desc||"")}</textarea>
-        <label class="pchk" style="margin-bottom:8px"><input type="checkbox" data-k="${k}" data-f="info" ${st.info?"checked":""}><span>📌 안내 항목 (체크박스 없이 보기만)</span></label>
+        <label class="pchk" style="margin-bottom:8px"><input type="checkbox" data-k="${k}" data-f="info" ${st.info?"checked":""}><span>📌 안내 항목 (번호 없이 📌로 표시)</span></label>
         <div class="row"><input class="search" style="flex:1;padding:9px 10px" data-k="${k}" data-f="who" value="${h(st.who||"")}" placeholder="담당·문의 (선택, 예: 팀 리더)"><button type="button" class="btn sm ghost" onclick="App._stepMove(${k},-1)" ${k===0?"disabled":""}>▲</button><button type="button" class="btn sm ghost" onclick="App._stepMove(${k},1)" ${k===s.steps.length-1?"disabled":""}>▼</button><button type="button" class="btn sm danger" onclick="App._stepDel(${k})">삭제</button></div></div>`).join("")}
       <button type="button" class="btn soft" style="width:100%" onclick="App._stepAdd()">＋ 할 일 추가</button>
       <div class="actions"><button class="btn ghost" onclick="App.close()">취소</button><button class="btn" onclick="App._secSave()">저장</button></div>`);
@@ -1435,7 +1435,6 @@ const App={
         <dt>계약 기간</dt><dd>${fmtDate(cStart(p))} ~ ${fmtDate(ce)} ${(cStart(p)||ce)?`<small class="muted">(${cOwn(p)?"개별 일정":"과제 일정"})</small> `:""}${ce?`<span class="badge ${n!=null&&n<0?"b-red":n!=null&&n<=30?"b-orange":"b-gray"}">${ddayText(n)}</span>`:""}</dd>
         <dt>PC</dt><dd>${pcs.length?pcs.map(x=>h(x.name)).join(", "):"-"}</dd>
         <dt>좌석</dt><dd>${seat?h(seatLabel(seat)):"-"}</dd>
-        <dt>입주가이드</dt><dd>${all?`${fin} / ${all} 완료`:"-"}</dd>
         <dt>영문 이름</dt><dd>${h(p.nameEn||"-")}</dd>
         <dt>직급</dt><dd>${h(p.rank||"-")}</dd>
         <dt>연락처</dt><dd>${p.contact?`<a href="tel:${h(p.contact)}" style="color:var(--pri)">${h(p.contact)}</a>`:"-"}</dd>
