@@ -386,7 +386,7 @@ const P_ST={
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
 const SEAT_MAX=20;
-const APP_VER="2026.11.22-6";
+const APP_VER="2026.11.22-7";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -776,7 +776,7 @@ function vGuide(){
   o+=`<div class="row" style="margin-bottom:14px"><button class="btn sm ${S.guideEdit?"":"ghost"}" onclick="App.toggleGuideEdit()">${S.guideEdit?"✅ 편집 끝내기":"✏️ 가이드 내용 고치기 (관리자)"}</button>${S.guideEdit?`<button class="btn sm soft" onclick="App.editSection(-1)">＋ 새 단계 묶음 추가</button>`:""}</div>`;
   if(S.guideEdit) o+=`<div class="alert info" style="margin-bottom:14px"><span class="ic">✏️</span><div>각 묶음을 펼치고 <b>✏️ 이 묶음 고치기</b>를 누르면 제목·설명·할 일을 고칠 수 있어요. ▲▼로 순서를 바꾸고, 할 일마다 <b>📌 안내 항목(체크 없음)</b>을 고를 수 있어요.</div></div>`;
   if(!secs.length) return o+`<div class="empty"><div class="ic">📄</div><b>아직 가이드가 없어요.</b><br>${isAdmin()?"위의 ‘가이드 내용 고치기’를 눌러 만들어 주세요.":"관리자가 곧 채워 줄 거예요."}</div>`;
-  if(!S.openSecs){ S.openSecs={}; if(secs[0]) S.openSecs[secs[0].id||0]=true; }
+  if(!S.openSecs) S.openSecs={};   /* 처음엔 모두 접힌 상태 */
   secs.forEach((s,i)=>{
     const steps=s.steps||[], tk=tasksOf(s), sf=tk.filter(st=>done[st.id]).length, allDone=tk.length&&sf===tk.length;
     const key=s.id||i;
