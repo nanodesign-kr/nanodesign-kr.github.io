@@ -385,7 +385,7 @@ const P_ST={
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
 const SEAT_MAX=20;
-const APP_VER="2026.11.22-3";
+const APP_VER="2026.11.22-4";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -644,7 +644,7 @@ function vHome(){
   </div>`;
   o+=`<h2 class="sec">🔔 확인이 필요해요</h2>`;
   const al=[];
-  ending.forEach(p=>{ const n=dday(cEnd(p)); al.push(`<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">⏰</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${n<0?"b-red":"b-orange"}">${ddayText(n)}</span></div><div class="meta">계약 종료 ${fmtDate(cEnd(p))} · ${dday(cEnd(p))<0?"계약 기간이 끝났어요":"계약 종료가 다가와요"}</div></div><span class="arrow">›</span></button>`); });
+  ending.forEach(p=>{ const n=dday(cEnd(p)); al.push(`<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">⏰</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${n<0?"b-red":"b-orange"}">${ddayText(n)}</span></div><div class="meta">${fmtDate(cEnd(p))}에 계약이 ${dday(cEnd(p))<0?"끝났어요":"끝나요"}</div></div><span class="arrow">›</span></button>`); });
   const minN=p=>Math.min(...pExpWarn(p).map(x=>x.n));
   S.people.filter(p=>pExpWarn(p).length).sort((a,b)=>minN(a)-minN(b)).forEach(p=>{ const mine=S.myPid&&p.id===S.myPid; al.push(`<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">🔑</span><div class="main"><div class="nm">${mine?"⭐ ":""}${h(p.name)} ${expBadges(p)}</div><div class="meta">계정 만료 전에 연장해 주세요</div></div><span class="arrow">›</span></button>`); });
   leftover.forEach(p=>{ al.push(`<button class="item" data-lp="person:${h(p.id)}" onclick="App.personDetail('${h(p.id)}')"><span style="font-size:22px">🧹</span><div class="main"><div class="nm">${h(p.name)} <span class="badge ${P_ST[p.status]?P_ST[p.status].c:"b-gray"}">${h(p.status||"-")}</span></div><div class="meta">테라타워에 없는데 PC나 좌석이 아직 이 사람으로 되어 있어요</div></div><span class="arrow">›</span></button>`); });
