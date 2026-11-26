@@ -386,7 +386,7 @@ const P_ST={
 };
 /* 구글 시트 서버 주소 (Apps Script 웹 앱 URL) */
 const SEAT_MAX=20;
-const APP_VER="2026.11.22-8";
+const APP_VER="2026.11.26-1";
 const API_URL="https://script.google.com/macros/s/AKfycbxokzOXuXIKK8JgQ-DIxe3tTZ_B5UC8_ba744RRRR54Sl6YNhk2eaxZl8J_byK4wQZ3wA/exec";
 const S={
   view:"home", api:"", pw:"", adminPw:"", adminOk:false, busy:false,
@@ -591,11 +591,11 @@ function render(){
   if(S.err==="sub") html+=`<div class="alert err" style="margin-top:12px"><span class="ic">⚠️</span><div><b>데이터를 불러오지 못했어요.</b>인터넷 연결을 확인하고 새로고침해 주세요.</div></div>`;
   const fn={home:vHome,guide:vGuide,pcs:vPcs,seats:vSeats,projects:vProjects,people:vPeople,manage:vManage}[S.view]||vHome;
   const y=window.scrollY;
-  v.innerHTML=html+fn();
+  v.innerHTML=html+(S.view!=="manage"&&!S.err?gsearchBox():"")+fn();
   if(y) window.scrollTo(0,y);
 }
 function route(){
-  const k=(location.hash||"#home").slice(1), prev=S.view; S.view=ROUTES.includes(k)?k:"home"; render(); window.scrollTo(0,0);
+  const k=(location.hash||"#home").slice(1), prev=S.view; S.view=ROUTES.includes(k)?k:"home"; if(prev!==S.view) S.gq=""; render(); window.scrollTo(0,0);
   const a=TABS.findIndex(t=>t.id===prev), b=TABS.findIndex(t=>t.id===S.view), v=$("view");
   if(v&&a>=0&&b>=0&&a!==b){ v.classList.remove("slide-l","slide-r"); void v.offsetWidth; v.classList.add(b>a?"slide-l":"slide-r"); }
 }
@@ -631,7 +631,7 @@ function vHome(){
   const ending=S.people.filter(p=>p.status==="테라타워 근무"&&cEnd(p)&&dday(cEnd(p))<=30).sort((a,b)=>cEnd(a).localeCompare(cEnd(b)));
   const leftover=S.people.filter(p=>p.status!=="테라타워 근무"&&(S.pcs.some(x=>x.personId===p.id&&x.status==="사용중")||S.seats.some(s=>s.personId===p.id)));
   const me=S.myPid&&person(S.myPid);
-  let o=`<div class="gsearch"><span aria-hidden="true">🔍</span><input id="gq" type="search" placeholder="검색: 이름, PC, IP, 과제, 가이드 문구…" value="${h(S.gq||"")}" oninput="App.gSearch(this.value)" autocomplete="off"></div><div id="gres">${S.gq?searchHtml(S.gq):""}</div>`;
+  let o="";
   o+=`<h1 class="page">안녕하세요${me?", "+h(me.name)+"님":""} 👋</h1><p class="lead">테라타워 현황을 한눈에 볼 수 있어요. 카드를 누르면 자세히 보여요.</p>`;
   {
     const mp=me&&S.pcs.filter(x=>x.personId===me.id).map(x=>x.name).join(", "), ms=me&&S.seats.find(x=>x.personId===me.id);
@@ -733,6 +733,9 @@ function snippet(text,q){
   const a=Math.max(0,i-18), b=Math.min(t.length,i+q.length+30);
   return (a?"…":"")+mark(t.slice(a,b),q)+(b<t.length?"…":"");
 }
+/* 모든 탭 맨 위 검색창 (홈과 같은 검색). 지금 보고 있는 탭 결과가 먼저 나와요 */
+const TAB_G={pcs:"💻 PC",people:"👤 사람",projects:"📁 과제",seats:"🪑 좌석",guide:"📋 입주가이드"};
+function gsearchBox(){ return `<div class="gsearch"><span aria-hidden="true">🔍</span><input id="gq" type="search" placeholder="검색: 이름, PC, IP, 과제, 가이드 문구…" value="${h(S.gq||"")}" oninput="App.gSearch(this.value)" autocomplete="off" enterkeyhint="search"></div><div id="gres">${S.gq?searchHtml(S.gq):""}</div>`; }
 function searchHtml(raw){
   const q=normQ(raw); if(q.length<1) return "";
   const qd=/^[\d\s\-.]+$/.test(q)?q.replace(/\D/g,""):"";
@@ -762,7 +765,8 @@ function searchHtml(raw){
   });
   if(!R.length) return `<div class="gres-empty">‘${h(raw.trim())}’ 검색 결과가 없어요.</div>`;
   const groups={}; R.forEach(r=>(groups[r.g]=groups[r.g]||[]).push(r));
-  return `<div class="gres-box"><div class="gres-n">검색 결과 ${R.length}개</div>`+Object.keys(groups).map(g=>`<div class="gres-g">${g} <span class="muted">${groups[g].length}</span></div>`+groups[g].slice(0,8).map(r=>`<button class="gres-i" ${r.data!=null?`data-n="${h(r.data)}"`:""} onclick="${r.on}"><b>${r.t}</b>${r.s?`<span>${r.s}</span>`:""}</button>`).join("")+(groups[g].length>8?`<div class="muted" style="font-size:12px;padding:4px 10px">… 외 ${groups[g].length-8}개 (검색어를 더 자세히 써 보세요)</div>`:"")).join("")+`</div>`;
+  const first=TAB_G[S.view], gk=Object.keys(groups).sort((a,b)=>(b===first)-(a===first));
+  return `<div class="gres-box"><div class="gres-n">검색 결과 ${R.length}개</div>`+gk.map(g=>`<div class="gres-g">${g} <span class="muted">${groups[g].length}</span></div>`+groups[g].slice(0,8).map(r=>`<button class="gres-i" ${r.data!=null?`data-n="${h(r.data)}"`:""} onclick="${r.on}"><b>${r.t}</b>${r.s?`<span>${r.s}</span>`:""}</button>`).join("")+(groups[g].length>8?`<div class="muted" style="font-size:12px;padding:4px 10px">… 외 ${groups[g].length-8}개 (검색어를 더 자세히 써 보세요)</div>`:"")).join("")+`</div>`;
 }
 
 /* info:true 인 항목은 체크박스 없이 안내만 보여 주고, 진행률 계산에서도 빠져요 */
@@ -822,7 +826,7 @@ function vPcs(bodyOnly){
   if(q) list=list.filter(p=>qHas([p.name,p.model,p.mfgNo,p.serial,p.mac,p.ip,pname(p.personId),pcLinked(p).proj,pcLinked(p).seat?seatLabel(pcLinked(p).seat):"",p.note].join(" ")+" "+pname(p.personId),q));
   let o=`<h1 class="page">💻 PC 현황</h1><p class="lead">PC를 누르면 <b>사용자 바꾸기</b>, 바뀐 기록, <b>📷 사진 추가</b>를 할 수 있어요. 길게 누르면 고치기·삭제가 나와요.</p>`;
   o+=`<div class="postit"><b>📌 꼭 해 주세요</b>PC 로그온 / OneCloud / VWP / Knox / SSO 비밀번호를 <u>본인 책상에 붙여 주세요.</u><br>과제 미진행 기간에 계정 연장을 위해 필요합니다.</div>`;
-  o+=`<div class="row" style="margin-bottom:12px"><input class="search" style="flex:1;min-width:180px" placeholder="🔍 PC 이름, 사용자, 과제로 찾기" value="${h(S.pcQ)}" oninput="App.pcSearch(this.value)"><button class="btn" onclick="App.editPc()">＋ PC 등록</button></div>`;
+  o+=`<div class="row" style="margin-bottom:12px"><span class="sp"></span><button class="btn" onclick="App.editPc()">＋ PC 등록</button></div>`;
   const head=o; o="";
   o+=`<div class="chips">${["전체",...Object.keys(PC_ST)].map(k=>`<button class="chip ${S.pcFilter===k?"on":""}" onclick="App.pcFilter('${k}')">${k==="대기"?"대기(남는 PC)":k} ${counts[k]}</button>`).join("")}</div>`;
   if(!S.pcs.length) o+=`<div class="empty"><div class="ic">💻</div><b>등록된 PC가 없어요.</b><br>‘＋ PC 등록’을 눌러 첫 PC를 넣어 주세요.</div>`;
@@ -961,7 +965,7 @@ function vPeople(bodyOnly){
   else if(S.pFilter!=="전체") list=list.filter(p=>p.status===S.pFilter);
   const q=S.pQ.trim().toLowerCase(); if(q) list=list.filter(p=>qHas([p.name,p.nameEn,p.rank,p.project,p.contact,p.email,p.knox,p.ssoId,p.vwpId,p.note].join(" "),q));
   let o=`<h1 class="page">👥 나노디자인 전체 인원</h1><p class="lead">회사 인원 모두의 연락처, 과제, 근무 위치, 계정 정보를 볼 수 있어요. 이름을 누르면 자세히 보이고, <b>길게 누르면 고치기·삭제</b>를 할 수 있어요.</p>`;
-  o+=`<div class="row" style="margin-bottom:12px"><input class="search" style="flex:1;min-width:160px" placeholder="🔍 이름·과제·연락처" value="${h(S.pQ)}" oninput="App.pSearch(this.value)"><button class="btn" onclick="App.editPerson()">＋ 사람 추가</button></div>`;
+  o+=`<div class="row" style="margin-bottom:12px"><span class="sp"></span><button class="btn" onclick="App.editPerson()">＋ 사람 추가</button></div>`;
   const head=o; o="";
   o+=`<div class="chips">${["전체",...Object.keys(P_ST)].map(k=>`<button class="chip ${S.pFilter===k?"on":""}" onclick="App.pFilter('${k}')">${k} ${counts[k]}</button>`).join("")}${counts["만료"]||S.pFilter==="만료"?`<button class="chip ${S.pFilter==="만료"?"on":""}" style="${S.pFilter==="만료"?"":"border-color:var(--orange);color:var(--orange)"}" onclick="App.pFilter('만료')">⏰ 계정 만료 임박 ${counts["만료"]}</button>`:""}</div>`;
   if(!S.people.length) o+=`<div class="empty"><div class="ic">👥</div><b>등록된 사람이 없어요.</b><br>‘＋ 사람 추가’로 회사 인원을 넣어 주세요.</div>`;
